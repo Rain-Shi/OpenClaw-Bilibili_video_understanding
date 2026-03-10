@@ -41,6 +41,7 @@ class ViDoveTextRefiner:
 
         return RefinementOutput(
             engine='vidove',
+            status='success',
             transcript=transcript,
             notes=['ViDove refinement applied.'],
             artifacts={

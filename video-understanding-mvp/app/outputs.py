@@ -17,6 +17,7 @@ def write_outputs(run_dir: Path, result: UnderstandingResult) -> None:
 
     manifest = {
         'title': result.title,
+        'refinement': (result.metadata or {}).get('refinement'),
         'artifacts': {
             'summary_md': str(run_dir / 'summary.md'),
             'chapters_json': str(run_dir / 'chapters.json'),

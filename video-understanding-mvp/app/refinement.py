@@ -19,10 +19,12 @@ class RefinementInput:
 @dataclass
 class RefinementOutput:
     engine: str
+    status: str = 'success'
     transcript: list[TranscriptChunk] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     artifacts: dict[str, str] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
+    failure_stage: Optional[str] = None
 
 
 class TextRefiner(Protocol):
@@ -33,6 +35,7 @@ class NoOpRefiner:
     def refine(self, payload: RefinementInput) -> RefinementOutput:
         return RefinementOutput(
             engine='noop',
+            status='skipped',
             transcript=payload.transcript,
             notes=['No text refinement applied.'],
             metadata={'mode': 'raw_transcript'},

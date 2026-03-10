@@ -8,7 +8,7 @@ from .config import MVPConfig
 from .fusion import build_timeline
 from .ingest import resolve_input
 from .outputs import write_outputs
-from .refinement import NoOpRefiner, RefinementInput
+from .refinement import NoOpRefiner, RefinementInput, RefinementOutput
 from .scene import build_simple_scenes
 from .understand import summarize_timeline
 from .vidove_refiner import ViDoveTextRefiner
@@ -38,7 +38,8 @@ def run_offline_video_mvp(input_value: str, config: MVPConfig) -> Path:
     )
 
     refiner = build_text_refiner(config)
-    refinement = refiner.refine(
+    refinement = run_refinement_with_fallback(
+        refiner,
         RefinementInput(
             source_video=video_path,
             run_dir=run_dir,
@@ -52,7 +53,17 @@ def run_offline_video_mvp(input_value: str, config: MVPConfig) -> Path:
     frames = sample_frames(video_path, frames_dir, config.frame_interval_sec, config.max_frames)
     scenes = build_simple_scenes(frames)
     timeline = build_timeline(refined_transcript, frames, scenes)
-    result = summarize_timeline(title, timeline, transcript=refined_transcript, frames=frames, metadata={**session.metadata, 'refinement': refinement.metadata, 'refinement_engine': refinement.engine})
+    result = summarize_timeline(title, timeline, transcript=refined_transcript, frames=frames, metadata={
+        **session.metadata,
+        'refinement': {
+            'engine': refinement.engine,
+            'status': refinement.status,
+            'failure_stage': refinement.failure_stage,
+            'notes': refinement.notes,
+            **refinement.metadata,
+        },
+        'refinement_engine': refinement.engine,
+    })
     result.artifacts = {
         'summary_md': str(run_dir / 'summary.md'),
         'chapters_json': str(run_dir / 'chapters.json'),
@@ -72,6 +83,33 @@ def build_text_refiner(config: MVPConfig):
     if config.refinement_engine == 'vidove':
         return ViDoveTextRefiner(config.vidove_repo_dir or '../ViDove')
     return NoOpRefiner()
+
+
+def run_refinement_with_fallback(refiner, payload: RefinementInput) -> RefinementOutput:
+    try:
+        output = refiner.refine(payload)
+        if output.status == 'skipped':
+            return output
+        if not output.transcript:
+            return RefinementOutput(
+                engine=output.engine,
+                status='partial',
+                transcript=payload.transcript,
+                notes=output.notes + ['Refinement returned no transcript; fell back to raw transcript.'],
+                artifacts=output.artifacts,
+                metadata=output.metadata,
+                failure_stage='empty_refinement_output',
+            )
+        return output
+    except Exception as exc:
+        return RefinementOutput(
+            engine=getattr(refiner, '__class__', type(refiner)).__name__,
+            status='failed',
+            transcript=payload.transcript,
+            notes=[f'Refinement failed; fell back to raw transcript: {exc}'],
+            metadata={'fallback': 'raw_transcript'},
+            failure_stage='refinement_exception',
+        )
 
 
 def write_run_request(run_dir: Path, input_value: str, config: MVPConfig) -> None:
