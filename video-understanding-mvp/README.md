@@ -5,6 +5,7 @@ This MVP is designed for **offline video understanding first**, with an upgrade 
 ## What it can do now
 - local video input
 - Bilibili URL input path (when `yt-dlp` is installed)
+- connector abstraction layer
 - audio extraction hook
 - real ASR adapter hook with fallback
 - frame sampling
@@ -21,6 +22,7 @@ This is now a **real runnable MVP path**, but some capabilities depend on local 
 - local video processing flow
 - result generation
 - fallback behavior when dependencies are missing
+- connector abstraction for future Bilibili live/browser modes
 
 ### Becomes truly useful when these are installed
 - `ffmpeg`
@@ -67,6 +69,32 @@ Example:
 ["Transformer", "Self-Attention", "Q K V"]
 ```
 
+## Connector-oriented architecture
+```text
+Bilibili URL / local video / browser session
+  -> connector layer
+  -> normalized media session
+  -> audio extraction + ASR
+  -> frame sampling + OCR hook
+  -> scene grouping
+  -> multimodal fusion
+  -> summary / chapters / result JSON
+```
+
+## Important design choice
+This project is intentionally moving toward a **connector-first design** rather than a brittle anti-bot-centric design.
+
+That means:
+- offline URL ingest
+- browser-session ingest
+- future live observation
+all normalize into the same internal media session contract.
+
+## Key docs
+- `RUNBOOK.md`
+- `BILIBILI_CONNECTOR_DESIGN.md`
+- `adapter/VIDOVE_REUSE_MAP.md`
+
 ## Why ViDove is still a good base
 ViDove already gives us:
 - pipeline orchestration ideas
@@ -75,22 +103,3 @@ ViDove already gives us:
 - memory / retrieval abstractions
 
 We are replacing its translation-centered middle stages with understanding-centered modules.
-
-## Current architecture
-```text
-Bilibili URL / local video
-  -> ingest
-  -> local media file
-  -> audio extraction + ASR
-  -> frame sampling + OCR hook
-  -> simple scene grouping
-  -> multimodal fusion
-  -> summary / chapters / result JSON
-```
-
-## Next upgrades
-- real OCR backend
-- better scene detection
-- Bilibili subtitle / danmaku ingestion
-- QA/search over transcript + visual timeline
-- multi-agent planner/fusion layer

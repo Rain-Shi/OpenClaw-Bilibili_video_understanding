@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict
 
-from .bilibili import is_bilibili_url, resolve_bilibili_to_local
+from .connectors import MediaSession, choose_connector
 
 
 def prepare_run_dir(input_value: str, workdir: Path) -> Path:
@@ -13,16 +12,7 @@ def prepare_run_dir(input_value: str, workdir: Path) -> Path:
     return run_dir
 
 
-def resolve_input(input_value: str, workdir: Path) -> Dict[str, Any]:
+def resolve_input(input_value: str, workdir: Path) -> MediaSession:
     run_dir = prepare_run_dir(input_value, workdir)
-    if is_bilibili_url(input_value):
-        payload = resolve_bilibili_to_local(input_value, run_dir)
-        payload['run_dir'] = str(run_dir)
-        return payload
-    payload = {
-        'title': Path(input_value).name,
-        'video_path': input_value,
-        'source': 'local_file',
-        'run_dir': str(run_dir),
-    }
-    return payload
+    connector = choose_connector(input_value)
+    return connector.resolve(input_value, run_dir)

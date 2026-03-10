@@ -13,10 +13,14 @@ from .vision import sample_frames
 
 
 def run_offline_video_mvp(input_value: str, config: MVPConfig) -> Path:
-    source = resolve_input(input_value, config.workdir)
-    run_dir = Path(source['run_dir'])
-    video_path = source['video_path']
-    title = source.get('title') or Path(video_path).name
+    session = resolve_input(input_value, config.workdir)
+    run_dir = Path(session.run_dir or config.workdir)
+
+    if not session.video_path:
+        raise RuntimeError('This connector did not provide a local video_path. Offline MVP currently requires local media.')
+
+    video_path = session.video_path
+    title = session.title or Path(video_path).name
 
     audio_path = run_dir / 'audio.wav'
     frames_dir = run_dir / 'frames'
