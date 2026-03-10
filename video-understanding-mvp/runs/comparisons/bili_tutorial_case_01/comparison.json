@@ -1,0 +1,33 @@
+{
+  "sample_name": "bili_tutorial_case_01",
+  "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-tutorial-01-mvp/BV1Nb421H77B_p1_clip300",
+  "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-tutorial-01-vidove/vidove_runs/task_e539e28b-6bf0-4bc9-bcae-a74d20fefb46",
+  "mvp": {
+    "title": "BV1Nb421H77B_p1_clip300.mkv",
+    "timeline_count": 58,
+    "chapter_count": 5,
+    "transcript_count": 58,
+    "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 58 timeline segments. Leading spoken content: 在短期视频开始之前请问门先给个三连吗 啊 你要摆票啊 那就给个免费的赞呗 谢了 这对我真的很重要 言言下日来 你为什么用什么方式填满你的手架呢 这色素旅游 ",
+    "timeline_preview": [
+      "在短期视频开始之前请问门先给个三连吗",
+      "啊 你要摆票啊",
+      "那就给个免费的赞呗",
+      "谢了",
+      "这对我真的很重要"
+    ]
+  },
+  "vidove": {
+    "title": "task_e539e28b-6bf0-4bc9-bcae-a74d20fefb46",
+    "timeline_count": 46,
+    "chapter_count": 5,
+    "transcript_count": 46,
+    "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 46 timeline segments. Leading spoken content: 在本期视频开始之前 请问能先给个三连吗 啊 那就给个免费的赞呗 谢啦 这对我真的很重要 炎炎夏日来临 你会选择哪种方式 ",
+    "timeline_preview": [
+      "在本期视频开始之前",
+      "请问能先给个三连吗",
+      "啊",
+      "那就给个免费的赞呗",
+      "谢啦"
+    ]
+  }
+}

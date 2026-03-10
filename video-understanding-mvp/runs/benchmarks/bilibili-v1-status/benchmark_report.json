@@ -1,0 +1,178 @@
+{
+  "manifest": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/benchmark_manifest.bilibili.v1.json",
+  "case_count": 4,
+  "cases": [
+    {
+      "sample_name": "bili_commentary_case_01",
+      "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-mvp/BV1odNgzpEm3_clip300",
+      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-vidove/vidove_runs/task_e9542727-9997-449f-8f36-bb5d7f9e2a38",
+      "status": {
+        "mvp": "success",
+        "vidove": "success"
+      },
+      "failure_stage": {
+        "mvp": null,
+        "vidove": null
+      },
+      "notes": {
+        "mvp": [],
+        "vidove": []
+      },
+      "mvp": {
+        "title": "BV1odNgzpEm3_clip300.mkv",
+        "timeline_count": 125,
+        "chapter_count": 5,
+        "transcript_count": 125,
+        "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 125 timeline segments. Leading spoken content: 金幣繪黃的設施品店來為一座拉塔的女人 她有路逛菜市場一般隨一百弄動作一套房的名牌包 銷售好心告知不能隨意觸碰 滑壞是造假賠償 女人卻直接放下豪言 女人的騷操作不止於此 這麼多名牌包 她進全部用現金解上 原來 她那造型系的旅行代理裝的全都是草票 女人也不在乎",
+        "timeline_preview": [
+          "金幣繪黃的設施品店來為一座拉塔的女人",
+          "她有路逛菜市場一般隨一百弄動作一套房的名牌包",
+          "銷售好心告知不能隨意觸碰 滑壞是造假賠償"
+        ]
+      },
+      "vidove": {
+        "title": "task_e9542727-9997-449f-8f36-bb5d7f9e2a38",
+        "timeline_count": 134,
+        "chapter_count": 5,
+        "transcript_count": 134,
+        "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 134 timeline segments. Leading spoken content: 金碧辉煌的奢侈品店来了位一桌邋遢的女人 她有路逛菜市場一般隨意擺弄 動輒一套房的名牌包 銷售好心告知不能隨意觸碰 劃壞是造价賠償 女人卻直接放下豪言 她说她要买所有我摸过的东西 女人的骚操作不止于此 ",
+        "timeline_preview": [
+          "金碧辉煌的奢侈品店来了位一桌邋遢的女人",
+          "她有路逛菜市場一般隨意擺弄",
+          "動輒一套房的名牌包"
+        ]
+      },
+      "initial_judgment": {
+        "timeline_delta": 9,
+        "chapter_delta": 0
+      }
+    },
+    {
+      "sample_name": "bili_tutorial_case_01",
+      "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-tutorial-01-mvp/BV1Nb421H77B_p1_clip300",
+      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-tutorial-01-vidove/vidove_runs/task_e539e28b-6bf0-4bc9-bcae-a74d20fefb46",
+      "status": {
+        "mvp": "success",
+        "vidove": "success"
+      },
+      "failure_stage": {
+        "mvp": null,
+        "vidove": null
+      },
+      "notes": {
+        "mvp": [],
+        "vidove": []
+      },
+      "mvp": {
+        "title": "BV1Nb421H77B_p1_clip300.mkv",
+        "timeline_count": 58,
+        "chapter_count": 5,
+        "transcript_count": 58,
+        "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 58 timeline segments. Leading spoken content: 在短期视频开始之前请问门先给个三连吗 啊 你要摆票啊 那就给个免费的赞呗 谢了 这对我真的很重要 言言下日来 你为什么用什么方式填满你的手架呢 这色素旅游 ",
+        "timeline_preview": [
+          "在短期视频开始之前请问门先给个三连吗",
+          "啊 你要摆票啊",
+          "那就给个免费的赞呗"
+        ]
+      },
+      "vidove": {
+        "title": "task_e539e28b-6bf0-4bc9-bcae-a74d20fefb46",
+        "timeline_count": 46,
+        "chapter_count": 5,
+        "transcript_count": 46,
+        "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 46 timeline segments. Leading spoken content: 在本期视频开始之前 请问能先给个三连吗 啊 那就给个免费的赞呗 谢啦 这对我真的很重要 炎炎夏日来临 你会选择哪种方式 ",
+        "timeline_preview": [
+          "在本期视频开始之前",
+          "请问能先给个三连吗",
+          "啊"
+        ]
+      },
+      "initial_judgment": {
+        "timeline_delta": -12,
+        "chapter_delta": 0
+      }
+    },
+    {
+      "sample_name": "bili_context_heavy_case_01",
+      "mvp_dir": ".",
+      "vidove_dir": ".",
+      "status": {
+        "mvp": "missing",
+        "vidove": "missing"
+      },
+      "failure_stage": {
+        "mvp": "unconfigured_case",
+        "vidove": "unconfigured_case"
+      },
+      "notes": {
+        "mvp": [
+          "mvp_dir is not set yet"
+        ],
+        "vidove": [
+          "vidove_dir is not set yet"
+        ]
+      },
+      "mvp": {
+        "title": null,
+        "timeline_count": 0,
+        "chapter_count": 0,
+        "transcript_count": 0,
+        "summary_preview": "",
+        "timeline_preview": []
+      },
+      "vidove": {
+        "title": null,
+        "timeline_count": 0,
+        "chapter_count": 0,
+        "transcript_count": 0,
+        "summary_preview": "",
+        "timeline_preview": []
+      },
+      "initial_judgment": {
+        "timeline_delta": 0,
+        "chapter_delta": 0
+      }
+    },
+    {
+      "sample_name": "bili_live_mock_case_01",
+      "mvp_dir": ".",
+      "vidove_dir": ".",
+      "status": {
+        "mvp": "missing",
+        "vidove": "missing"
+      },
+      "failure_stage": {
+        "mvp": "unconfigured_case",
+        "vidove": "unconfigured_case"
+      },
+      "notes": {
+        "mvp": [
+          "mvp_dir is not set yet"
+        ],
+        "vidove": [
+          "vidove_dir is not set yet"
+        ]
+      },
+      "mvp": {
+        "title": null,
+        "timeline_count": 0,
+        "chapter_count": 0,
+        "transcript_count": 0,
+        "summary_preview": "",
+        "timeline_preview": []
+      },
+      "vidove": {
+        "title": null,
+        "timeline_count": 0,
+        "chapter_count": 0,
+        "transcript_count": 0,
+        "summary_preview": "",
+        "timeline_preview": []
+      },
+      "initial_judgment": {
+        "timeline_delta": 0,
+        "chapter_delta": 0
+      }
+    }
+  ]
+}
