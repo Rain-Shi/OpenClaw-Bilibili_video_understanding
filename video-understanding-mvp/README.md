@@ -20,14 +20,18 @@ Input: local video file (offline first)
 Output:
 - transcript
 - scene/frame notes
+- OCR sidecar support
 - summary
 - chapter suggestions
 - timeline JSON for later QA/search
 
 ## Current status
-This repo now has a **real ASR adapter hook** with graceful fallback:
-- if `ffmpeg` and `whisper` CLI are installed, it can produce a real transcript
-- otherwise it falls back to `mock_transcript.json` / placeholder transcript
+This repo now has:
+- a **real ASR adapter hook** with graceful fallback
+- frame sampling
+- simple scene grouping
+- OCR adapter hook with graceful fallback
+- timeline output with speech + visual frame refs + OCR fields
 
 ## Run
 ```bash
@@ -53,10 +57,22 @@ Inside the run directory:
 - `ffmpeg`
 - `whisper` CLI
 
-Example future setup:
-```bash
-sudo apt-get install ffmpeg
-pip install openai-whisper
+### Later OCR options
+- `tesseract` + python OCR bindings
+- PaddleOCR
+- cloud OCR service
+
+## OCR sidecar trick (works now)
+Even without OCR installed, you can attach mock OCR per frame later by creating sidecar files like:
+
+```text
+frame_0001.jpg
+frame_0001.ocr.json
+```
+
+Example OCR sidecar:
+```json
+["Transformer", "Self-Attention", "Q K V"]
 ```
 
 ## Suggested architecture
@@ -101,6 +117,8 @@ video-understanding-mvp/
     audio.py
     asr_adapter.py
     vision.py
+    ocr_adapter.py
+    scene.py
     fusion.py
     understand.py
     outputs.py

@@ -29,6 +29,8 @@ class TimelineUnit:
     speech: str
     visual_notes: List[str] = field(default_factory=list)
     ocr: List[str] = field(default_factory=list)
+    scene_id: Optional[str] = None
+    scene_type: Optional[str] = None
     importance: Optional[float] = None
 
 

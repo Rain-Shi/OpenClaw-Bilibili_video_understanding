@@ -6,6 +6,7 @@ from typing import List
 
 from .asr_adapter import shutil_which
 from .models import FrameEvent
+from .ocr_adapter import extract_ocr_text
 
 
 class VisionDependencyError(RuntimeError):
@@ -31,5 +32,9 @@ def sample_frames(video_path: str, frames_dir: Path, interval_sec: int = 15, max
     events: List[FrameEvent] = []
     for idx, frame in enumerate(sorted(frames_dir.glob('frame_*.jpg'))):
         ts = float(idx * interval_sec)
-        events.append(FrameEvent(timestamp=ts, frame_path=str(frame), visual_tags=['frame_sample']))
+        ocr = extract_ocr_text(str(frame))
+        tags = ['frame_sample']
+        if ocr:
+            tags.append('ocr_present')
+        events.append(FrameEvent(timestamp=ts, frame_path=str(frame), visual_tags=tags, ocr=ocr))
     return events
