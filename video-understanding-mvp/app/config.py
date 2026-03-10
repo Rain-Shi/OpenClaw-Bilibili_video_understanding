@@ -14,3 +14,5 @@ class MVPConfig:
     asr_provider: str = 'auto'
     asr_model: str = 'base'
     language_hint: Optional[str] = None
+    engine: str = 'mvp'
+    vidove_repo_dir: Optional[Path] = None

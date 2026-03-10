@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from app.config import MVPConfig
-from app.pipeline import run_offline_video_mvp
+from app.bridge import run_with_engine
 
 
 def main() -> None:
@@ -17,6 +17,8 @@ def main() -> None:
     parser.add_argument('--asr-provider', default='auto', choices=['auto', 'whisper-cli'])
     parser.add_argument('--asr-model', default='base', help='Whisper model name, e.g. base/small/medium')
     parser.add_argument('--language', default=None, help='Optional ASR language hint, e.g. en / zh')
+    parser.add_argument('--engine', default='mvp', choices=['mvp', 'vidove'])
+    parser.add_argument('--vidove-repo', default='../ViDove', help='Path to local ViDove repo when using --engine vidove')
     args = parser.parse_args()
 
     input_value = args.video_file or args.bilibili_url
@@ -30,8 +32,10 @@ def main() -> None:
         asr_provider=args.asr_provider,
         asr_model=args.asr_model,
         language_hint=args.language,
+        engine=args.engine,
+        vidove_repo_dir=Path(args.vidove_repo),
     )
-    run_dir = run_offline_video_mvp(input_value, cfg)
+    run_dir = run_with_engine(input_value, cfg)
     print(f'MVP finished. Outputs in: {run_dir}')
 
 
