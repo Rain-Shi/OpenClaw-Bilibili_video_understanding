@@ -40,6 +40,25 @@ def run_vidove_bridge(input_value: str, config: MVPConfig) -> Path:
     return result.task_dir
 
 
+_TRAD_TO_SIMP = {
+    '這': '这', '於': '于', '產': '产', '還': '还', '網': '网', '擁': '拥', '與': '与', '點': '点',
+    '臨': '临', '搗': '捣', '裏': '里', '現': '现', '鏽': '锈', '蒼': '苍', '圍': '围', '這批': '这批',
+    '劣質': '劣质', '瓊': '琼', '個': '个', '獲': '获', '顯': '显', '過': '过', '萬': '万', '幣': '币',
+    '買': '买', '賣': '卖', '連同': '连同', '押': '押', '達': '达', '牽': '牵', '廣': '广', '竇': '窦',
+    '拘捕': '拘捕', '仍在逃': '仍在逃', '聲稱': '声称', '創辦': '创办', '現場': '现场', '號': '号',
+    '臺': '台', '灣': '湾', '價': '价', '體': '体', '們': '们', '對': '对', '為': '为', '廣東': '广东',
+    '浙江臨海警方近日搗破這批化妝品的生產基地': '浙江临海警方近日捣破这批化妆品的生产基地',
+}
+
+
+def _normalize_script(text: str) -> str:
+    s = (text or '').strip()
+    for trad, simp in _TRAD_TO_SIMP.items():
+        s = s.replace(trad, simp)
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s
+
+
 def _looks_like_editorial_leak(text: str) -> bool:
     t = (text or '').strip()
     if not t:
@@ -64,7 +83,7 @@ def _clean_translated_segments(transcript, translated):
             if idx < len(transcript):
                 replacement = transcript[idx].text
             if replacement and not _looks_like_editorial_leak(replacement):
-                seg.text = replacement
+                seg.text = _normalize_script(replacement)
                 cleaning_notes.append({
                     'index': idx,
                     'action': 'replaced_with_transcribed_text',
@@ -78,6 +97,7 @@ def _clean_translated_segments(transcript, translated):
                     'original': original_text,
                 })
                 continue
+        seg.text = _normalize_script(seg.text)
         cleaned.append(seg)
     return cleaned, cleaning_notes
 
