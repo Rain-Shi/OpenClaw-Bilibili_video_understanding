@@ -73,20 +73,31 @@ def _looks_like_editorial_leak(text: str) -> bool:
     return any(re.search(p, t, re.IGNORECASE) for p in patterns)
 
 
+def _is_mostly_ascii(text: str) -> bool:
+    t = (text or '').strip()
+    if not t:
+        return False
+    ascii_chars = sum(1 for c in t if ord(c) < 128)
+    return ascii_chars / max(len(t), 1) > 0.8
+
+
+def _contains_cjk(text: str) -> bool:
+    return any('\u4e00' <= ch <= '\u9fff' for ch in (text or ''))
+
+
 def _clean_translated_segments(transcript, translated):
     cleaned = []
     cleaning_notes = []
     for idx, seg in enumerate(translated):
         original_text = seg.text
+        replacement = transcript[idx].text if idx < len(transcript) else None
+
         if _looks_like_editorial_leak(original_text):
-            replacement = None
-            if idx < len(transcript):
-                replacement = transcript[idx].text
             if replacement and not _looks_like_editorial_leak(replacement):
                 seg.text = _normalize_script(replacement)
                 cleaning_notes.append({
                     'index': idx,
-                    'action': 'replaced_with_transcribed_text',
+                    'action': 'replaced_editorial_leak_with_transcribed_text',
                     'original': original_text,
                     'replacement': replacement,
                 })
@@ -97,6 +108,21 @@ def _clean_translated_segments(transcript, translated):
                     'original': original_text,
                 })
                 continue
+        elif _is_mostly_ascii(original_text):
+            if replacement and _contains_cjk(replacement):
+                seg.text = _normalize_script(replacement)
+                cleaning_notes.append({
+                    'index': idx,
+                    'action': 'replaced_mostly_english_segment_with_transcribed_text',
+                    'original': original_text,
+                    'replacement': replacement,
+                })
+            else:
+                cleaning_notes.append({
+                    'index': idx,
+                    'action': 'kept_mostly_english_segment_no_better_replacement',
+                    'original': original_text,
+                })
         seg.text = _normalize_script(seg.text)
         cleaned.append(seg)
     return cleaned, cleaning_notes
