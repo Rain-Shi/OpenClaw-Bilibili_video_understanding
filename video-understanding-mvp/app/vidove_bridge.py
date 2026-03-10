@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 from .asr_adapter import _parse_srt
@@ -10,6 +9,12 @@ from .models import TimelineUnit
 from .outputs import write_outputs
 from .understand import summarize_timeline
 from .vidove_adapter import ViDoveAdapter, ViDoveAdapterError
+from .vidove_cleaner import (
+    contains_cjk,
+    is_mostly_ascii,
+    looks_like_editorial_leak,
+    normalize_script,
+)
 
 
 def run_vidove_bridge(input_value: str, config: MVPConfig) -> Path:
@@ -40,51 +45,6 @@ def run_vidove_bridge(input_value: str, config: MVPConfig) -> Path:
     return result.task_dir
 
 
-_TRAD_TO_SIMP = {
-    '這': '这', '於': '于', '產': '产', '還': '还', '網': '网', '擁': '拥', '與': '与', '點': '点',
-    '臨': '临', '搗': '捣', '裏': '里', '現': '现', '鏽': '锈', '蒼': '苍', '圍': '围', '這批': '这批',
-    '劣質': '劣质', '瓊': '琼', '個': '个', '獲': '获', '顯': '显', '過': '过', '萬': '万', '幣': '币',
-    '買': '买', '賣': '卖', '連同': '连同', '押': '押', '達': '达', '牽': '牵', '廣': '广', '竇': '窦',
-    '拘捕': '拘捕', '仍在逃': '仍在逃', '聲稱': '声称', '創辦': '创办', '現場': '现场', '號': '号',
-    '臺': '台', '灣': '湾', '價': '价', '體': '体', '們': '们', '對': '对', '為': '为', '廣東': '广东',
-    '浙江臨海警方近日搗破這批化妝品的生產基地': '浙江临海警方近日捣破这批化妆品的生产基地',
-}
-
-
-def _normalize_script(text: str) -> str:
-    s = (text or '').strip()
-    for trad, simp in _TRAD_TO_SIMP.items():
-        s = s.replace(trad, simp)
-    s = re.sub(r'\s+', ' ', s).strip()
-    return s
-
-
-def _looks_like_editorial_leak(text: str) -> bool:
-    t = (text or '').strip()
-    if not t:
-        return True
-    patterns = [
-        r'^The translated text is already in Chinese',
-        r'^No revision is needed\.?$',
-        r'^A total of \d+ people were arrested\.?$',
-        r'^The other \d+ are still at large\.?$',
-        r'^The amount involved reached over',
-    ]
-    return any(re.search(p, t, re.IGNORECASE) for p in patterns)
-
-
-def _is_mostly_ascii(text: str) -> bool:
-    t = (text or '').strip()
-    if not t:
-        return False
-    ascii_chars = sum(1 for c in t if ord(c) < 128)
-    return ascii_chars / max(len(t), 1) > 0.8
-
-
-def _contains_cjk(text: str) -> bool:
-    return any('\u4e00' <= ch <= '\u9fff' for ch in (text or ''))
-
-
 def _clean_translated_segments(transcript, translated):
     cleaned = []
     cleaning_notes = []
@@ -92,9 +52,9 @@ def _clean_translated_segments(transcript, translated):
         original_text = seg.text
         replacement = transcript[idx].text if idx < len(transcript) else None
 
-        if _looks_like_editorial_leak(original_text):
-            if replacement and not _looks_like_editorial_leak(replacement):
-                seg.text = _normalize_script(replacement)
+        if looks_like_editorial_leak(original_text):
+            if replacement and not looks_like_editorial_leak(replacement):
+                seg.text = normalize_script(replacement)
                 cleaning_notes.append({
                     'index': idx,
                     'action': 'replaced_editorial_leak_with_transcribed_text',
@@ -108,9 +68,9 @@ def _clean_translated_segments(transcript, translated):
                     'original': original_text,
                 })
                 continue
-        elif _is_mostly_ascii(original_text):
-            if replacement and _contains_cjk(replacement):
-                seg.text = _normalize_script(replacement)
+        elif is_mostly_ascii(original_text):
+            if replacement and contains_cjk(replacement):
+                seg.text = normalize_script(replacement)
                 cleaning_notes.append({
                     'index': idx,
                     'action': 'replaced_mostly_english_segment_with_transcribed_text',
@@ -123,7 +83,7 @@ def _clean_translated_segments(transcript, translated):
                     'action': 'kept_mostly_english_segment_no_better_replacement',
                     'original': original_text,
                 })
-        seg.text = _normalize_script(seg.text)
+        seg.text = normalize_script(seg.text)
         cleaned.append(seg)
     return cleaned, cleaning_notes
 
