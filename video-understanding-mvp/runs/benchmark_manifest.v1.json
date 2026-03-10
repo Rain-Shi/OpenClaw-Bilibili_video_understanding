@@ -1,0 +1,30 @@
+{
+  "cases": [
+    {
+      "sample_name": "kio_ted_en_120",
+      "input_type": "local_video",
+      "language": "en",
+      "category": "ted_talk",
+      "goal": "asr_quality",
+      "source_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/samples/KioStark_2016_clip120.mp4",
+      "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/kio-120/KioStark_2016_clip120",
+      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/vidove-kio-placeholder",
+      "reference_transcript": null,
+      "reference_summary": null,
+      "notes": "English TED talk baseline. Good for clean speech and segmentation quality."
+    },
+    {
+      "sample_name": "hkcnews_zh_120",
+      "input_type": "local_video",
+      "language": "zh",
+      "category": "news",
+      "goal": "asr_quality",
+      "source_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/samples/hkcnews_china_20210203_clip120.mp4",
+      "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/zh-news-natural/hkcnews_china_20210203_clip120",
+      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/vidove-smoke-7/vidove_runs/task_47834e71-5210-407f-a363-d602b56721d9",
+      "reference_transcript": null,
+      "reference_summary": null,
+      "notes": "Chinese news narration, close to information-style video and current Bilibili target scenario."
+    }
+  ]
+}
