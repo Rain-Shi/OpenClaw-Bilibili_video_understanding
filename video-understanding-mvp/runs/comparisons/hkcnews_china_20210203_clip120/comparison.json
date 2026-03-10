@@ -1,0 +1,33 @@
+{
+  "sample_name": "hkcnews_china_20210203_clip120",
+  "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/zh-news-natural/hkcnews_china_20210203_clip120",
+  "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/vidove-smoke-7/vidove_runs/task_47834e71-5210-407f-a363-d602b56721d9",
+  "mvp": {
+    "title": "hkcnews_china_20210203_clip120.mp4",
+    "timeline_count": 30,
+    "chapter_count": 5,
+    "transcript_count": 0,
+    "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 30 timeline segments. Leading spoken content: 這間在14年成立的化妝品公司 其下生產多款未容產品 其中面商還被網友推送做美白神商 吸引到不少人都上家盟代理 官網聲稱 他們擁有強大的研發團隊 結合天然元鳥和尖端皮膚科學 這些產品用了什麼天然元鳥就不知道 ",
+    "timeline_preview": [
+      "這間在14年成立的化妝品公司",
+      "其下生產多款未容產品",
+      "其中面商還被網友推送做美白神商",
+      "吸引到不少人都上家盟代理",
+      "官網聲稱"
+    ]
+  },
+  "vidove": {
+    "title": "task_47834e71-5210-407f-a363-d602b56721d9",
+    "timeline_count": 28,
+    "chapter_count": 5,
+    "transcript_count": 28,
+    "summary_preview": "Offline MVP summary generated from transcript/timeline. Observed 28 timeline segments. Leading spoken content: 这家于2014年成立的化妆品公司 旗下生产多款美容产品 其中面霜还被网友誉为美白神霜 吸引了不少人希望加盟代理 官网声称他们拥有强大的研发团队。 结合天然原料与尖端皮肤科学 这些产品用了哪些天然原料就不得而知 但提取的地点竟然在这里 ",
+    "timeline_preview": [
+      "这家于2014年成立的化妆品公司",
+      "旗下生产多款美容产品",
+      "其中面霜还被网友誉为美白神霜",
+      "吸引了不少人希望加盟代理",
+      "官网声称他们拥有强大的研发团队。"
+    ]
+  }
+}

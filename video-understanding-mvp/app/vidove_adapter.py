@@ -26,6 +26,7 @@ class ViDoveAdapter:
         self.entry = self.repo_dir / 'entries' / 'run.py'
         self.launch_cfg = self.repo_dir / 'configs' / 'local_launch.yaml'
         self.task_cfg = self.repo_dir / 'configs' / 'task_config.yaml'
+        self.python_bin = self._choose_python_bin()
 
     def is_available(self) -> bool:
         return self.repo_dir.exists() and self.entry.exists()
@@ -42,12 +43,13 @@ class ViDoveAdapter:
             'environ: local\n'
             'api_source: openai\n'
         )
+        task_cfg = self._make_local_task_cfg(output_root)
 
         cmd = [
-            'python3', str(self.entry),
+            str(self.python_bin), str(self.entry),
             '--video_file', video_file,
             '--launch_cfg', str(launch_cfg),
-            '--task_cfg', str(self.task_cfg),
+            '--task_cfg', str(task_cfg),
         ]
 
         proc = subprocess.run(
@@ -65,6 +67,26 @@ class ViDoveAdapter:
             stderr=proc.stderr,
             note='ViDove run completed' if proc.returncode == 0 else 'ViDove run failed',
         )
+
+    def _choose_python_bin(self) -> Path:
+        candidates = [
+            self.repo_dir / '.venv' / 'bin' / 'python',
+            self.repo_dir / '.venv310' / 'bin' / 'python',
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                return candidate
+        return Path('python3')
+
+    def _make_local_task_cfg(self, output_root: Path) -> Path:
+        output_root.mkdir(parents=True, exist_ok=True)
+        raw = self.task_cfg.read_text(encoding='utf-8')
+        raw = raw.replace('audio_agent: GeminiAudioAgent # clip or other vLLMs', 'audio_agent: WhisperAudioAgent # clip or other vLLMs')
+        raw = raw.replace('src_lang: en', 'src_lang: zh')
+        raw = raw.replace('target_lang: ZH', 'target_lang: ZH')
+        patched = output_root / 'vidove_task_config.local.yaml'
+        patched.write_text(raw, encoding='utf-8')
+        return patched
 
     def _latest_task_dir(self, output_root: Path) -> Optional[Path]:
         candidates = sorted(

@@ -8,7 +8,7 @@
       "goal": "asr_quality",
       "source_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/samples/KioStark_2016_clip120.mp4",
       "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/kio-120/KioStark_2016_clip120",
-      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/vidove-kio-placeholder",
+      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/vidove-kio/vidove_runs/task_f09fcfc0-acf4-4aca-88c7-fcc318e08b4b",
       "reference_transcript": null,
       "reference_summary": null,
       "notes": "English TED talk baseline. Good for clean speech and segmentation quality."

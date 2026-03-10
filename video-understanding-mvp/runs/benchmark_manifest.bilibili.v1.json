@@ -53,7 +53,7 @@
       "bvid": "BV1odNgzpEm3",
       "source_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/samples/bilibili/BV1odNgzpEm3_clip300.mkv",
       "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-mvp/BV1odNgzpEm3_clip300",
-      "vidove_dir": null,
+      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-vidove/vidove_runs/task_e9542727-9997-449f-8f36-bb5d7f9e2a38",
       "reference_transcript": null,
       "reference_summary": null,
       "notes": "Chinese commentary / explanation video close to the target Bilibili understanding scenario. Selected because it is narration-heavy, internet-native, and close to the intended Bilibili summary use case.",
