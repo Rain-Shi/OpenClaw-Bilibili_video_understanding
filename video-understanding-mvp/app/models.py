@@ -96,6 +96,8 @@ class UnderstandingResult:
     keywords: List[str]
     timeline: List[TimelineUnit]
     transcript: List[TranscriptChunk] = field(default_factory=list)
+    raw_transcript: List[TranscriptChunk] = field(default_factory=list)
+    refined_transcript: List[TranscriptChunk] = field(default_factory=list)
     frames: List[FrameEvent] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
     artifacts: dict[str, str] = field(default_factory=dict)
@@ -108,6 +110,8 @@ class UnderstandingResult:
             'keywords': self.keywords,
             'timeline': [asdict(x) for x in self.timeline],
             'transcript': [asdict(x) for x in self.transcript],
+            'raw_transcript': [asdict(x) for x in self.raw_transcript],
+            'refined_transcript': [asdict(x) for x in self.refined_transcript],
             'frames': [asdict(x) for x in self.frames],
             'metadata': self.metadata,
             'artifacts': self.artifacts,

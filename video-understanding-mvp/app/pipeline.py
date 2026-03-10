@@ -64,6 +64,8 @@ def run_offline_video_mvp(input_value: str, config: MVPConfig) -> Path:
         },
         'refinement_engine': refinement.engine,
     })
+    result.raw_transcript = transcript
+    result.refined_transcript = refined_transcript
     result.artifacts = {
         'summary_md': str(run_dir / 'summary.md'),
         'chapters_json': str(run_dir / 'chapters.json'),
