@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "name": "bilibili-benchmark-v1",
+    "description": "Initial benchmark manifest for Bilibili-targeted video understanding comparison between MVP and ViDove.",
+    "version": "1.0",
+    "notes": [
+      "This manifest is for case organization first, not full automatic scoring yet.",
+      "Fill mvp_dir and vidove_dir after both engines have been run on the same sample.",
+      "Use expected_challenges to explain why a sample is valuable.",
+      "The first batch below contains selected Bilibili-style candidates chosen for representative coverage, not yet fully resolved to final BV IDs/URLs."
+    ]
+  },
+  "selection_criteria": {
+    "general": [
+      "Prefer publicly accessible Bilibili videos with stable playback pages.",
+      "Prefer 2-8 minute clips or videos that can be clipped to that range.",
+      "Prefer single-speaker or dominant-speaker narration for first-round benchmarking.",
+      "Prefer Mandarin-first audio with relatively clear speech and limited background music.",
+      "Avoid highly copyrighted film/TV reposts for the first benchmark set.",
+      "Avoid videos that require strong visual-only understanding in v1."
+    ],
+    "commentary_case": [
+      "Should contain continuous Chinese narration.",
+      "Should include named entities, internet-style phrasing, or domain wording.",
+      "Should be close to Bilibili explanation/commentary style."
+    ],
+    "tutorial_case": [
+      "Should have clear topic structure or steps.",
+      "Should be suitable for chapter segmentation evaluation.",
+      "Prefer videos with moderate screen text or technical vocabulary."
+    ],
+    "context_heavy_case": [
+      "Should reflect stronger Bilibili platform flavor or internet-context dependence.",
+      "Prefer samples where plain transcript alone may miss part of the meaning.",
+      "Can include meme-heavy or cultural-context-heavy explanation."
+    ],
+    "live_mock_case": [
+      "Should be longer and more conversational.",
+      "Should resemble a stream clip, podcast clip, or long unscripted commentary.",
+      "Useful for future migration toward rolling or live summarization."
+    ]
+  },
+  "cases": [
+    {
+      "sample_name": "bili_commentary_case_01",
+      "input_type": "bilibili_video",
+      "language": "zh",
+      "category": "bilibili_commentary",
+      "goal": "understanding_quality",
+      "candidate_title": "2026 网飞爆剧！她编造的奢侈品卖遍全球，自己却惨死水沟《莎拉的真伪人生》",
+      "candidate_uploader": "正经的瓜皮酱",
+      "source_url": null,
+      "bvid": null,
+      "source_path": null,
+      "mvp_dir": null,
+      "vidove_dir": null,
+      "reference_transcript": null,
+      "reference_summary": null,
+      "notes": "Chinese commentary / explanation video close to the target Bilibili understanding scenario. Selected because it is narration-heavy, internet-native, and close to the intended Bilibili summary use case.",
+      "expected_challenges": [
+        "fast speech",
+        "internet slang",
+        "named entities"
+      ]
+    },
+    {
+      "sample_name": "bili_tutorial_case_01",
+      "input_type": "bilibili_video",
+      "language": "zh",
+      "category": "bilibili_tutorial",
+      "goal": "chapter_quality",
+      "candidate_title": "【全289集】比付费还强10倍的自学剪辑全套教程，全程通俗易懂，别再走弯路了，小白看完速通PR剪辑！",
+      "candidate_uploader": "剪辑圈彭于晏",
+      "source_url": null,
+      "bvid": null,
+      "source_path": null,
+      "mvp_dir": null,
+      "vidove_dir": null,
+      "reference_transcript": null,
+      "reference_summary": null,
+      "notes": "Chinese tutorial / knowledge-sharing candidate with very clear structure. Good for chapter quality, topic segmentation, and future OCR/screen-text fusion. First-round use should clip only a short segment rather than run the full video.",
+      "expected_challenges": [
+        "technical terms",
+        "screen text",
+        "structured explanation"
+      ]
+    },
+    {
+      "sample_name": "bili_context_heavy_case_01",
+      "input_type": "bilibili_video",
+      "language": "zh",
+      "category": "bilibili_context_heavy",
+      "goal": "platform_context_fusion",
+      "candidate_title": "一口气看完《除恶》：2026悬疑新剧，精彩到炸，全员恶人，一集就上头。",
+      "candidate_uploader": "喵喵剪影Zzz",
+      "source_url": null,
+      "bvid": null,
+      "source_path": null,
+      "mvp_dir": null,
+      "vidove_dir": null,
+      "reference_transcript": null,
+      "reference_summary": null,
+      "notes": "Bilibili-style context-heavy candidate with stronger platform flavor. Useful for testing internet-style framing, title-summary alignment, and eventual danmaku/comment fusion potential.",
+      "expected_challenges": [
+        "platform slang",
+        "implicit context",
+        "summary grounding"
+      ]
+    },
+    {
+      "sample_name": "bili_live_mock_case_01",
+      "input_type": "bilibili_video",
+      "language": "zh",
+      "category": "bilibili_live_mock",
+      "goal": "long_context",
+      "candidate_title": "【阿斗】爆肝4个月，世界评分最高的电视剧一次看爽！详细解说《绝命毒师》1-5季",
+      "candidate_uploader": "阿斗归来了",
+      "source_url": null,
+      "bvid": null,
+      "source_path": null,
+      "mvp_dir": null,
+      "vidove_dir": null,
+      "reference_transcript": null,
+      "reference_summary": null,
+      "notes": "Long-form commentary candidate chosen as a bridge toward future live-summary evaluation. It should be clipped to a representative 3-5 minute span for the first benchmark round.",
+      "expected_challenges": [
+        "casual speech",
+        "topic drift",
+        "long context"
+      ]
+    }
+  ]
+}
