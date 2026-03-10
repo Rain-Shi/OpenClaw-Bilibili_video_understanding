@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
+from .asr_adapter import _parse_srt
 from .config import MVPConfig
+from .models import TimelineUnit
+from .outputs import write_outputs
+from .understand import summarize_timeline
 from .vidove_adapter import ViDoveAdapter, ViDoveAdapterError
 
 
@@ -30,4 +35,76 @@ def run_vidove_bridge(input_value: str, config: MVPConfig) -> Path:
     if result.task_dir is None:
         raise ViDoveAdapterError('ViDove run succeeded but no task_* directory was found.')
 
+    export_vidove_into_mvp_outputs(result.task_dir)
     return result.task_dir
+
+
+def export_vidove_into_mvp_outputs(task_dir: Path) -> None:
+    results_dir = task_dir / 'results'
+    if not results_dir.exists():
+        raise ViDoveAdapterError(f'ViDove results dir missing: {results_dir}')
+
+    transcribed_srt = next(results_dir.glob('*_transcribed.srt'), None)
+    zh_srt = next(results_dir.glob('*_ZH.srt'), None)
+    if not transcribed_srt or not zh_srt:
+        raise ViDoveAdapterError('Expected ViDove SRT outputs not found.')
+
+    transcript = _parse_srt(transcribed_srt.read_text(encoding='utf-8'))
+    translated = _parse_srt(zh_srt.read_text(encoding='utf-8'))
+
+    timeline = [
+        TimelineUnit(
+            start=seg.start,
+            end=seg.end,
+            speech=seg.text,
+            visual_notes=[],
+            ocr=[],
+            scene_id=None,
+            scene_type='vidove_segment',
+            importance=0.7,
+        )
+        for seg in translated
+    ]
+
+    title = task_dir.name
+    result = summarize_timeline(
+        title,
+        timeline,
+        transcript=transcript,
+        frames=[],
+        metadata={
+            'engine': 'vidove',
+            'vidove_task_dir': str(task_dir),
+            'transcribed_srt': str(transcribed_srt),
+            'translated_srt': str(zh_srt),
+        },
+    )
+    result.artifacts = {
+        'summary_md': str(task_dir / 'summary.md'),
+        'chapters_json': str(task_dir / 'chapters.json'),
+        'result_json': str(task_dir / 'result.json'),
+        'transcript_json': str(task_dir / 'transcript.json'),
+        'transcript_srt': str(transcribed_srt),
+        'translated_srt': str(zh_srt),
+        'vidove_task_dir': str(task_dir),
+    }
+    write_outputs(task_dir, result)
+
+    translated_payload = [vars(x) for x in translated]
+    (task_dir / 'translated_transcript.json').write_text(
+        json.dumps(translated_payload, ensure_ascii=False, indent=2),
+        encoding='utf-8',
+    )
+
+    comparison_summary = {
+        'engine': 'vidove',
+        'notes': [
+            'Mapped ViDove SRT outputs into MVP summary/result/chapters structure.',
+            'Timeline currently uses translated ZH subtitles as speech units.',
+            'Further work: fuse ViDove proofreader/editor outputs more cleanly and normalize bilingual leakage.',
+        ],
+    }
+    (task_dir / 'vidove_mapping_notes.json').write_text(
+        json.dumps(comparison_summary, ensure_ascii=False, indent=2),
+        encoding='utf-8',
+    )
