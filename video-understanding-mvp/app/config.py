@@ -15,4 +15,5 @@ class MVPConfig:
     asr_model: str = 'base'
     language_hint: Optional[str] = None
     engine: str = 'mvp'
+    refinement_engine: str = 'none'
     vidove_repo_dir: Optional[Path] = None
