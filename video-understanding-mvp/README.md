@@ -2,65 +2,57 @@
 
 This MVP is designed for **offline video understanding first**, with an upgrade path toward **real-time multi-agent video watching** later.
 
-## Why build on ViDove
-ViDove already provides several reusable foundations:
-
-- `src/task.py` — pipeline orchestration pattern
-- `src/audio/` — audio extraction / VAD / ASR agent abstraction
-- `src/vision/` — frame analysis / vision agent abstraction
-- `src/memory/` — memory and retrieval abstractions
-- `src/translators/` and `src/editorial/` — LLM reasoning / refinement patterns
-- `entries/run.py` — CLI-style task entrypoint
-
-ViDove is translation-oriented. This MVP repurposes the same structure for **understanding** instead of translation.
-
-## MVP goal
-Input: local video file (offline first)
-
-Output:
-- transcript
-- scene/frame notes
-- OCR sidecar support
-- summary
-- chapter suggestions
-- timeline JSON for later QA/search
-
-## Current status
-This repo now has:
-- a **real ASR adapter hook** with graceful fallback
+## What it can do now
+- local video input
+- Bilibili URL input path (when `yt-dlp` is installed)
+- audio extraction hook
+- real ASR adapter hook with fallback
 - frame sampling
+- OCR adapter hook with fallback
 - simple scene grouping
-- OCR adapter hook with graceful fallback
-- timeline output with speech + visual frame refs + OCR fields
+- timeline output
+- summary / chapter draft output
 
-## Run
+## MVP status
+This is now a **real runnable MVP path**, but some capabilities depend on local tools:
+
+### Works today in structure
+- pipeline execution
+- local video processing flow
+- result generation
+- fallback behavior when dependencies are missing
+
+### Becomes truly useful when these are installed
+- `ffmpeg`
+- `yt-dlp` (for direct Bilibili URL ingestion)
+- `whisper` CLI (for real transcript generation)
+- OCR stack later (optional)
+
+## Run with local file
 ```bash
 python3 video-understanding-mvp/entries/run_mvp.py --video_file /path/to/video.mp4
 ```
 
-Optional:
+## Run with Bilibili URL
 ```bash
-python3 video-understanding-mvp/entries/run_mvp.py --video_file /path/to/video.mp4 --asr-provider whisper-cli
+python3 video-understanding-mvp/entries/run_mvp.py --bilibili_url "https://www.bilibili.com/video/BV..."
+```
+
+## Recommended install for a truly usable offline MVP
+```bash
+sudo apt-get install ffmpeg
+pip install yt-dlp openai-whisper
 ```
 
 ## Output files
 Inside the run directory:
-- `audio.wav` (if ffmpeg available)
+- `bilibili_meta.json` (if Bilibili URL ingestion is used)
+- `audio.wav`
 - `transcript.json`
 - `transcript.srt`
 - `summary.md`
 - `chapters.json`
 - `result.json`
-
-## Dependencies to unlock real processing
-### Minimum for real offline MVP
-- `ffmpeg`
-- `whisper` CLI
-
-### Later OCR options
-- `tesseract` + python OCR bindings
-- PaddleOCR
-- cloud OCR service
 
 ## OCR sidecar trick (works now)
 Even without OCR installed, you can attach mock OCR per frame later by creating sidecar files like:
@@ -70,74 +62,35 @@ frame_0001.jpg
 frame_0001.ocr.json
 ```
 
-Example OCR sidecar:
+Example:
 ```json
 ["Transformer", "Self-Attention", "Q K V"]
 ```
 
-## Suggested architecture
+## Why ViDove is still a good base
+ViDove already gives us:
+- pipeline orchestration ideas
+- audio abstraction
+- vision abstraction
+- memory / retrieval abstractions
 
+We are replacing its translation-centered middle stages with understanding-centered modules.
+
+## Current architecture
 ```text
-Local video
+Bilibili URL / local video
   -> ingest
+  -> local media file
   -> audio extraction + ASR
-  -> frame sampling + OCR/vision notes
+  -> frame sampling + OCR hook
+  -> simple scene grouping
   -> multimodal fusion
-  -> understanding outputs (summary / chapters / timeline)
+  -> summary / chapters / result JSON
 ```
 
-## What to reuse from ViDove
-
-### Reuse directly or conceptually
-- Audio agent abstraction from `src/audio/audio_agent.py`
-- Vision agent abstraction from `src/vision/vision_agent.py`
-- Pipeline coordinator pattern from `src/task.py`
-- Memory abstraction from `src/memory/`
-- CLI entry style from `entries/run.py`
-
-### Replace / simplify
-- Translation stage -> Understanding stage
-- Proofreader / Editor -> Summary / Chapter / Highlight reasoning
-- Subtitle rendering -> JSON / markdown report output
-
-## Proposed new modules
-
-```text
-video-understanding-mvp/
-  README.md
-  ROADMAP.md
-  adapter/
-    VIDOVE_REUSE_MAP.md
-  app/
-    __init__.py
-    config.py
-    models.py
-    pipeline.py
-    ingest.py
-    audio.py
-    asr_adapter.py
-    vision.py
-    ocr_adapter.py
-    scene.py
-    fusion.py
-    understand.py
-    outputs.py
-  entries/
-    run_mvp.py
-```
-
-## Bilibili support path
-For now: offline local video first.
-Later:
-- add Bilibili URL resolver/downloader layer
-- then feed local media into the same pipeline
-
-## Future multi-agent path
-Later, split `understand.py` into:
-- speech agent
-- vision agent
-- fusion agent
-- planner agent
-- critic agent
-
-That way the MVP stays compatible with a multi-agent future.
+## Next upgrades
+- real OCR backend
+- better scene detection
+- Bilibili subtitle / danmaku ingestion
+- QA/search over transcript + visual timeline
+- multi-agent planner/fusion layer
