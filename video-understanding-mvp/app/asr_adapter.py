@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from .models import TranscriptChunk
 
@@ -41,15 +41,22 @@ def _parse_srt(srt_text: str) -> List[TranscriptChunk]:
         else:
             continue
         start_raw, end_raw = [x.strip() for x in time_line.split('-->')]
+
         def to_seconds(tc: str) -> float:
             hh, mm, rest = tc.replace('.', ',').split(':')
             ss, ms = rest.split(',')
             return int(hh) * 3600 + int(mm) * 60 + int(ss) + int(ms) / 1000.0
+
         out.append(TranscriptChunk(start=to_seconds(start_raw), end=to_seconds(end_raw), text=' '.join(text_lines)))
     return out
 
 
-def transcribe_with_whisper_cli(audio_path: str, run_dir: Path, model: str = 'base') -> List[TranscriptChunk]:
+def transcribe_with_whisper_cli(
+    audio_path: str,
+    run_dir: Path,
+    model: str = 'base',
+    language_hint: Optional[str] = None,
+) -> List[TranscriptChunk]:
     if not shutil_which('whisper'):
         raise ASRAdapterError('whisper CLI not found in PATH')
     out_dir = run_dir / 'asr'
@@ -60,6 +67,8 @@ def transcribe_with_whisper_cli(audio_path: str, run_dir: Path, model: str = 'ba
         '--output_format', 'srt',
         '--output_dir', str(out_dir),
     ]
+    if language_hint:
+        cmd.extend(['--language', language_hint])
     subprocess.run(cmd, check=True)
     srt_path = out_dir / (Path(audio_path).stem + '.srt')
     if not srt_path.exists():

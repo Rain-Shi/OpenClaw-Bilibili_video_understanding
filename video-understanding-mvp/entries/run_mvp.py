@@ -15,6 +15,8 @@ def main() -> None:
     parser.add_argument('--frame-interval', type=int, default=15)
     parser.add_argument('--max-frames', type=int, default=24)
     parser.add_argument('--asr-provider', default='auto', choices=['auto', 'whisper-cli'])
+    parser.add_argument('--asr-model', default='base', help='Whisper model name, e.g. base/small/medium')
+    parser.add_argument('--language', default=None, help='Optional ASR language hint, e.g. en / zh')
     args = parser.parse_args()
 
     input_value = args.video_file or args.bilibili_url
@@ -26,6 +28,8 @@ def main() -> None:
         frame_interval_sec=args.frame_interval,
         max_frames=args.max_frames,
         asr_provider=args.asr_provider,
+        asr_model=args.asr_model,
+        language_hint=args.language,
     )
     run_dir = run_offline_video_mvp(input_value, cfg)
     print(f'MVP finished. Outputs in: {run_dir}')

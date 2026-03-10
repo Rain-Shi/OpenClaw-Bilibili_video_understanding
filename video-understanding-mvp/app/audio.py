@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from .asr_adapter import (
     ASRAdapterError,
@@ -32,7 +32,14 @@ def extract_audio(video_path: str, output_audio: str) -> None:
     )
 
 
-def build_transcript(video_path: str, run_dir: Path, audio_path: Path, asr_provider: str = 'auto') -> List[TranscriptChunk]:
+def build_transcript(
+    video_path: str,
+    run_dir: Path,
+    audio_path: Path,
+    asr_provider: str = 'auto',
+    asr_model: str = 'base',
+    language_hint: Optional[str] = None,
+) -> List[TranscriptChunk]:
     try:
         extract_audio(video_path, str(audio_path))
     except AudioDependencyError:
@@ -43,7 +50,12 @@ def build_transcript(video_path: str, run_dir: Path, audio_path: Path, asr_provi
     transcript: List[TranscriptChunk]
     try:
         if asr_provider in ('auto', 'whisper-cli'):
-            transcript = transcribe_with_whisper_cli(str(audio_path), run_dir)
+            transcript = transcribe_with_whisper_cli(
+                str(audio_path),
+                run_dir,
+                model=asr_model,
+                language_hint=language_hint,
+            )
         else:
             raise ASRAdapterError(f'Unsupported ASR provider: {asr_provider}')
     except ASRAdapterError:
