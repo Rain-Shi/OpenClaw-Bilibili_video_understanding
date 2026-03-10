@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from .asr_adapter import _parse_srt
@@ -39,6 +40,48 @@ def run_vidove_bridge(input_value: str, config: MVPConfig) -> Path:
     return result.task_dir
 
 
+def _looks_like_editorial_leak(text: str) -> bool:
+    t = (text or '').strip()
+    if not t:
+        return True
+    patterns = [
+        r'^The translated text is already in Chinese',
+        r'^No revision is needed\.?$',
+        r'^A total of \d+ people were arrested\.?$',
+        r'^The other \d+ are still at large\.?$',
+        r'^The amount involved reached over',
+    ]
+    return any(re.search(p, t, re.IGNORECASE) for p in patterns)
+
+
+def _clean_translated_segments(transcript, translated):
+    cleaned = []
+    cleaning_notes = []
+    for idx, seg in enumerate(translated):
+        original_text = seg.text
+        if _looks_like_editorial_leak(original_text):
+            replacement = None
+            if idx < len(transcript):
+                replacement = transcript[idx].text
+            if replacement and not _looks_like_editorial_leak(replacement):
+                seg.text = replacement
+                cleaning_notes.append({
+                    'index': idx,
+                    'action': 'replaced_with_transcribed_text',
+                    'original': original_text,
+                    'replacement': replacement,
+                })
+            else:
+                cleaning_notes.append({
+                    'index': idx,
+                    'action': 'dropped_editorial_leak',
+                    'original': original_text,
+                })
+                continue
+        cleaned.append(seg)
+    return cleaned, cleaning_notes
+
+
 def export_vidove_into_mvp_outputs(task_dir: Path) -> None:
     results_dir = task_dir / 'results'
     if not results_dir.exists():
@@ -51,6 +94,7 @@ def export_vidove_into_mvp_outputs(task_dir: Path) -> None:
 
     transcript = _parse_srt(transcribed_srt.read_text(encoding='utf-8'))
     translated = _parse_srt(zh_srt.read_text(encoding='utf-8'))
+    translated_clean, cleaning_notes = _clean_translated_segments(transcript, translated)
 
     timeline = [
         TimelineUnit(
@@ -63,7 +107,7 @@ def export_vidove_into_mvp_outputs(task_dir: Path) -> None:
             scene_type='vidove_segment',
             importance=0.7,
         )
-        for seg in translated
+        for seg in translated_clean
     ]
 
     title = task_dir.name
@@ -90,7 +134,7 @@ def export_vidove_into_mvp_outputs(task_dir: Path) -> None:
     }
     write_outputs(task_dir, result)
 
-    translated_payload = [vars(x) for x in translated]
+    translated_payload = [vars(x) for x in translated_clean]
     (task_dir / 'translated_transcript.json').write_text(
         json.dumps(translated_payload, ensure_ascii=False, indent=2),
         encoding='utf-8',
@@ -100,9 +144,11 @@ def export_vidove_into_mvp_outputs(task_dir: Path) -> None:
         'engine': 'vidove',
         'notes': [
             'Mapped ViDove SRT outputs into MVP summary/result/chapters structure.',
-            'Timeline currently uses translated ZH subtitles as speech units.',
+            'Timeline currently uses cleaned translated ZH subtitles as speech units.',
+            'Applied a lightweight cleaner for obvious editorial leakage in final subtitles.',
             'Further work: fuse ViDove proofreader/editor outputs more cleanly and normalize bilingual leakage.',
         ],
+        'cleaning_notes': cleaning_notes,
     }
     (task_dir / 'vidove_mapping_notes.json').write_text(
         json.dumps(comparison_summary, ensure_ascii=False, indent=2),
