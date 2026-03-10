@@ -10,3 +10,4 @@ class MVPConfig:
     frame_interval_sec: int = 15
     max_frames: int = 24
     use_llm: bool = False
+    asr_provider: str = 'auto'

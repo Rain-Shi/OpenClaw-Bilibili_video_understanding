@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .audio import extract_audio, load_mock_transcript
+from .audio import build_transcript
 from .config import MVPConfig
 from .fusion import build_timeline
 from .ingest import prepare_run_dir
@@ -16,8 +16,7 @@ def run_offline_video_mvp(video_path: str, config: MVPConfig) -> Path:
     audio_path = run_dir / 'audio.wav'
     frames_dir = run_dir / 'frames'
 
-    extract_audio(video_path, str(audio_path))
-    transcript = load_mock_transcript(run_dir)
+    transcript = build_transcript(video_path, run_dir, audio_path, config.asr_provider)
     frames = sample_frames(video_path, frames_dir, config.frame_interval_sec, config.max_frames)
     timeline = build_timeline(transcript, frames)
     result = summarize_timeline(Path(video_path).name, timeline)

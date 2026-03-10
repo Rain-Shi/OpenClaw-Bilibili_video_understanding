@@ -4,10 +4,17 @@ import subprocess
 from pathlib import Path
 from typing import List
 
+from .asr_adapter import shutil_which
 from .models import FrameEvent
 
 
+class VisionDependencyError(RuntimeError):
+    pass
+
+
 def sample_frames(video_path: str, frames_dir: Path, interval_sec: int = 15, max_frames: int = 24) -> List[FrameEvent]:
+    if not shutil_which('ffmpeg'):
+        return []
     frames_dir.mkdir(parents=True, exist_ok=True)
     pattern = str(frames_dir / 'frame_%04d.jpg')
     subprocess.run(

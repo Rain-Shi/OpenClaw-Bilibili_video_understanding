@@ -13,12 +13,14 @@ def main() -> None:
     parser.add_argument('--workdir', default='./runs', help='Output working directory')
     parser.add_argument('--frame-interval', type=int, default=15)
     parser.add_argument('--max-frames', type=int, default=24)
+    parser.add_argument('--asr-provider', default='auto', choices=['auto', 'whisper-cli'])
     args = parser.parse_args()
 
     cfg = MVPConfig(
         workdir=Path(args.workdir),
         frame_interval_sec=args.frame_interval,
         max_frames=args.max_frames,
+        asr_provider=args.asr_provider,
     )
     run_dir = run_offline_video_mvp(args.video_file, cfg)
     print(f'MVP finished. Outputs in: {run_dir}')

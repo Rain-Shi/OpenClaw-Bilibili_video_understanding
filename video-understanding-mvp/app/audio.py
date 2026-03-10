@@ -1,14 +1,26 @@
 from __future__ import annotations
 
-import json
 import subprocess
 from pathlib import Path
 from typing import List
 
+from .asr_adapter import (
+    ASRAdapterError,
+    load_mock_or_existing_transcript,
+    persist_transcript,
+    shutil_which,
+    transcribe_with_whisper_cli,
+)
 from .models import TranscriptChunk
 
 
+class AudioDependencyError(RuntimeError):
+    pass
+
+
 def extract_audio(video_path: str, output_audio: str) -> None:
+    if not shutil_which('ffmpeg'):
+        raise AudioDependencyError('ffmpeg not found in PATH')
     subprocess.run(
         [
             'ffmpeg', '-y', '-i', video_path,
@@ -20,11 +32,22 @@ def extract_audio(video_path: str, output_audio: str) -> None:
     )
 
 
-def load_mock_transcript(run_dir: Path) -> List[TranscriptChunk]:
-    mock_path = run_dir / 'mock_transcript.json'
-    if mock_path.exists():
-        data = json.loads(mock_path.read_text())
-        return [TranscriptChunk(**x) for x in data]
-    return [
-        TranscriptChunk(start=0.0, end=30.0, text='MVP placeholder transcript. Replace with ASR integration.'),
-    ]
+def build_transcript(video_path: str, run_dir: Path, audio_path: Path, asr_provider: str = 'auto') -> List[TranscriptChunk]:
+    try:
+        extract_audio(video_path, str(audio_path))
+    except AudioDependencyError:
+        transcript = load_mock_or_existing_transcript(run_dir)
+        persist_transcript(run_dir, transcript)
+        return transcript
+
+    transcript: List[TranscriptChunk]
+    try:
+        if asr_provider in ('auto', 'whisper-cli'):
+            transcript = transcribe_with_whisper_cli(str(audio_path), run_dir)
+        else:
+            raise ASRAdapterError(f'Unsupported ASR provider: {asr_provider}')
+    except ASRAdapterError:
+        transcript = load_mock_or_existing_transcript(run_dir)
+
+    persist_transcript(run_dir, transcript)
+    return transcript

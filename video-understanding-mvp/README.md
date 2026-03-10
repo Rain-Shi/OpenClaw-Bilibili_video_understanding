@@ -24,6 +24,41 @@ Output:
 - chapter suggestions
 - timeline JSON for later QA/search
 
+## Current status
+This repo now has a **real ASR adapter hook** with graceful fallback:
+- if `ffmpeg` and `whisper` CLI are installed, it can produce a real transcript
+- otherwise it falls back to `mock_transcript.json` / placeholder transcript
+
+## Run
+```bash
+python3 video-understanding-mvp/entries/run_mvp.py --video_file /path/to/video.mp4
+```
+
+Optional:
+```bash
+python3 video-understanding-mvp/entries/run_mvp.py --video_file /path/to/video.mp4 --asr-provider whisper-cli
+```
+
+## Output files
+Inside the run directory:
+- `audio.wav` (if ffmpeg available)
+- `transcript.json`
+- `transcript.srt`
+- `summary.md`
+- `chapters.json`
+- `result.json`
+
+## Dependencies to unlock real processing
+### Minimum for real offline MVP
+- `ffmpeg`
+- `whisper` CLI
+
+Example future setup:
+```bash
+sudo apt-get install ffmpeg
+pip install openai-whisper
+```
+
 ## Suggested architecture
 
 ```text
@@ -64,6 +99,7 @@ video-understanding-mvp/
     pipeline.py
     ingest.py
     audio.py
+    asr_adapter.py
     vision.py
     fusion.py
     understand.py
@@ -71,23 +107,6 @@ video-understanding-mvp/
   entries/
     run_mvp.py
 ```
-
-## MVP pipeline steps
-1. `ingest.py`
-   - accept local file path
-   - prepare working directory
-2. `audio.py`
-   - extract audio via ffmpeg
-   - provide transcript placeholder / ASR hook
-3. `vision.py`
-   - sample frames at interval
-   - produce simple visual events
-4. `fusion.py`
-   - align transcript chunks and frame events
-5. `understand.py`
-   - generate summary / chapter suggestions / keywords
-6. `outputs.py`
-   - write `summary.md`, `timeline.json`, `chapters.json`
 
 ## Bilibili support path
 For now: offline local video first.
