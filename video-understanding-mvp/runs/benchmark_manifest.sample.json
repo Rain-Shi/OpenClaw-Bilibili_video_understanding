@@ -1,0 +1,9 @@
+{
+  "cases": [
+    {
+      "sample_name": "hkcnews_china_20210203_clip120",
+      "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/zh-news-natural/hkcnews_china_20210203_clip120",
+      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/vidove-smoke-7/vidove_runs/task_47834e71-5210-407f-a363-d602b56721d9"
+    }
+  ]
+}
