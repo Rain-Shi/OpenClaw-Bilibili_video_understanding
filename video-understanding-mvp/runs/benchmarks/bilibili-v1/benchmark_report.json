@@ -1,0 +1,39 @@
+{
+  "name": "bilibili-benchmark-v1",
+  "case_count": 1,
+  "cases": [
+    {
+      "sample_name": "bili_commentary_case_01",
+      "title": "2026 网飞爆剧！她编造的奢侈品卖遍全球，自己却惨死水沟《莎拉的真伪人生》",
+      "uploader": "正经的瓜皮酱",
+      "bvid": "BV1odNgzpEm3",
+      "source_url": "https://www.bilibili.com/video/BV1odNgzpEm3/",
+      "clip_seconds": 300,
+      "category": "bilibili_commentary",
+      "goal": "understanding_quality",
+      "status": {
+        "mvp": "success",
+        "vidove": "success"
+      },
+      "mvp": {
+        "timeline_count": 125,
+        "chapter_count": 5,
+        "dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-mvp/BV1odNgzpEm3_clip300"
+      },
+      "vidove": {
+        "timeline_count": 134,
+        "chapter_count": 5,
+        "dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-vidove/vidove_runs/task_e9542727-9997-449f-8f36-bb5d7f9e2a38"
+      },
+      "judgment": {
+        "winner_for_text_quality": "vidove",
+        "winner_for_future_system_skeleton": "mvp",
+        "notes": [
+          "ViDove is stronger on transcript/text recovery quality for this Bilibili commentary sample.",
+          "MVP remains easier to extend toward structured Bilibili understanding outputs.",
+          "ViDove required a mixed-language cleaner to become directly comparable on this sample."
+        ]
+      }
+    }
+  ]
+}
