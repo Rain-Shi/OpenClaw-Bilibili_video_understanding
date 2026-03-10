@@ -1,0 +1,12 @@
+{
+  "input_value": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/samples/hkcnews_china_20210203_clip120.mp4",
+  "config": {
+    "frame_interval_sec": 15,
+    "max_frames": 24,
+    "use_llm": false,
+    "asr_provider": "auto",
+    "asr_model": "base",
+    "language_hint": "zh",
+    "refinement_engine": "vidove"
+  }
+}

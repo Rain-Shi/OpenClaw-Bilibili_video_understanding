@@ -1,0 +1,21 @@
+{
+  "title": "hkcnews_china_20210203_clip120.mp4",
+  "refinement": {
+    "engine": "ViDoveTextRefiner",
+    "status": "failed",
+    "failure_stage": "refinement_exception",
+    "notes": [
+      "Refinement failed; fell back to raw transcript: ViDove refinement failed. See: /home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/vidove_refinement/vidove_debug_manifest.json"
+    ],
+    "fallback": "raw_transcript"
+  },
+  "artifacts": {
+    "summary_md": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/summary.md",
+    "chapters_json": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/chapters.json",
+    "result_json": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/result.json",
+    "transcript_json": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/transcript.json",
+    "transcript_srt": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/transcript.srt",
+    "audio_wav": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/audio.wav",
+    "frames_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames"
+  }
+}

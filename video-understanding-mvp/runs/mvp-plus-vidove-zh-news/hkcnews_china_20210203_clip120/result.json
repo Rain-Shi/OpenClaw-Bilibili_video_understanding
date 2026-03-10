@@ -1,0 +1,690 @@
+{
+  "title": "hkcnews_china_20210203_clip120.mp4",
+  "summary": "Offline MVP summary generated from transcript/timeline. Observed 30 timeline segments. Leading spoken content: 這間在14年成立的化妝品公司 其下生產多款未容產品 其中面商還被網友推送做美白神商 吸引到不少人都上家盟代理 官網聲稱 他們擁有強大的研發團隊 結合天然元鳥和尖端皮膚科學 這些產品用了什麼天然元鳥就不知道 ",
+  "chapters": [
+    {
+      "title": "Chapter 1",
+      "start": 0.0,
+      "end": 3.2,
+      "scene_id": "scene_001",
+      "summary": null,
+      "importance": null,
+      "extra": {}
+    },
+    {
+      "title": "Chapter 2",
+      "start": 3.2,
+      "end": 5.44,
+      "scene_id": "scene_001",
+      "summary": null,
+      "importance": null,
+      "extra": {}
+    },
+    {
+      "title": "Chapter 3",
+      "start": 5.44,
+      "end": 9.04,
+      "scene_id": "scene_001",
+      "summary": null,
+      "importance": null,
+      "extra": {}
+    },
+    {
+      "title": "Chapter 4",
+      "start": 9.04,
+      "end": 11.84,
+      "scene_id": "scene_001",
+      "summary": null,
+      "importance": null,
+      "extra": {}
+    },
+    {
+      "title": "Chapter 5",
+      "start": 11.84,
+      "end": 13.04,
+      "scene_id": "scene_001",
+      "summary": null,
+      "importance": null,
+      "extra": {}
+    }
+  ],
+  "keywords": [
+    "bilibili",
+    "video",
+    "understanding",
+    "mvp"
+  ],
+  "timeline": [
+    {
+      "start": 0.0,
+      "end": 3.2,
+      "speech": "這間在14年成立的化妝品公司",
+      "visual_notes": [
+        "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0001.jpg"
+      ],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 3.2,
+      "end": 5.44,
+      "speech": "其下生產多款未容產品",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 5.44,
+      "end": 9.04,
+      "speech": "其中面商還被網友推送做美白神商",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 9.04,
+      "end": 11.84,
+      "speech": "吸引到不少人都上家盟代理",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 11.84,
+      "end": 13.04,
+      "speech": "官網聲稱",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 13.04,
+      "end": 15.36,
+      "speech": "他們擁有強大的研發團隊",
+      "visual_notes": [
+        "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0002.jpg"
+      ],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 15.36,
+      "end": 18.64,
+      "speech": "結合天然元鳥和尖端皮膚科學",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 18.64,
+      "end": 22.24,
+      "speech": "這些產品用了什麼天然元鳥就不知道",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 22.24,
+      "end": 25.04,
+      "speech": "但提取的場所竟然在這裡",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 25.04,
+      "end": 29.28,
+      "speech": "至今臨海警方近日倒破這批化妝品的生產基地",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 29.28,
+      "end": 31.76,
+      "speech": "竟然是一個廢棄公司入面",
+      "visual_notes": [
+        "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0003.jpg"
+      ],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 31.76,
+      "end": 34.8,
+      "speech": "現場的工具生售污應周圍飛",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 34.8,
+      "end": 39.76,
+      "speech": "劣質產品分為5優劫、浩曼和傾曼三個牌子",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 39.76,
+      "end": 42.24,
+      "speech": "全部都未拿到化妝品批號",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 42.24,
+      "end": 45.44,
+      "speech": "美白效果顯著是因為用了過量水銀",
+      "visual_notes": [
+        "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0004.jpg"
+      ],
+      "ocr": [],
+      "scene_id": "scene_001",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 45.44,
+      "end": 48.0,
+      "speech": "經檢測超標7000多倍",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 48.0,
+      "end": 50.24,
+      "speech": "現在在內地網上已經找不到",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 50.24,
+      "end": 52.48,
+      "speech": "又買這些牌子的美容產品",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 52.48,
+      "end": 55.6,
+      "speech": "不過在台灣二手拍賣網就仍然找到",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 55.68,
+      "end": 59.92,
+      "speech": "一進30g的美容商賣180元港幣左右",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 59.92,
+      "end": 61.6,
+      "speech": "品牌創辦人工稱",
+      "visual_notes": [
+        "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0005.jpg"
+      ],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 61.6,
+      "end": 65.28,
+      "speech": "化妝品元鳥是由一個叫做哈爾奔唐總的人",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_002",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 65.28,
+      "end": 68.24,
+      "speech": "而每公斤100元人民幣的價格買入",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_002",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 68.24,
+      "end": 72.24,
+      "speech": "即是每張的元鳥只需要2元到10元人民幣",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": "scene_002",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 72.24,
+      "end": 75.12,
+      "speech": "這批美容產品已經賣了70多萬瓶",
+      "visual_notes": [
+        "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0006.jpg"
+      ],
+      "ocr": [],
+      "scene_id": "scene_002",
+      "scene_type": "sampled_scene",
+      "importance": 0.5
+    },
+    {
+      "start": 75.12,
+      "end": 77.92,
+      "speech": "連同現場扣壓的10萬多瓶產品",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 77.92,
+      "end": 80.88,
+      "speech": "承諾音額達到3000多萬人民幣",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 80.88,
+      "end": 84.64,
+      "speech": "顯示橫跨折缸、廣東等多省的8個斗口",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 84.64,
+      "end": 86.16,
+      "speech": "一共拉了10個人",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    },
+    {
+      "start": 86.16,
+      "end": 88.16,
+      "speech": "另外4個人仍然在逃",
+      "visual_notes": [],
+      "ocr": [],
+      "scene_id": null,
+      "scene_type": null,
+      "importance": 0.5
+    }
+  ],
+  "transcript": [
+    {
+      "start": 0.0,
+      "end": 3.2,
+      "text": "這間在14年成立的化妝品公司",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 3.2,
+      "end": 5.44,
+      "text": "其下生產多款未容產品",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 5.44,
+      "end": 9.04,
+      "text": "其中面商還被網友推送做美白神商",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 9.04,
+      "end": 11.84,
+      "text": "吸引到不少人都上家盟代理",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 11.84,
+      "end": 13.04,
+      "text": "官網聲稱",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 13.04,
+      "end": 15.36,
+      "text": "他們擁有強大的研發團隊",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 15.36,
+      "end": 18.64,
+      "text": "結合天然元鳥和尖端皮膚科學",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 18.64,
+      "end": 22.24,
+      "text": "這些產品用了什麼天然元鳥就不知道",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 22.24,
+      "end": 25.04,
+      "text": "但提取的場所竟然在這裡",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 25.04,
+      "end": 29.28,
+      "text": "至今臨海警方近日倒破這批化妝品的生產基地",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 29.28,
+      "end": 31.76,
+      "text": "竟然是一個廢棄公司入面",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 31.76,
+      "end": 34.8,
+      "text": "現場的工具生售污應周圍飛",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 34.8,
+      "end": 39.76,
+      "text": "劣質產品分為5優劫、浩曼和傾曼三個牌子",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 39.76,
+      "end": 42.24,
+      "text": "全部都未拿到化妝品批號",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 42.24,
+      "end": 45.44,
+      "text": "美白效果顯著是因為用了過量水銀",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 45.44,
+      "end": 48.0,
+      "text": "經檢測超標7000多倍",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 48.0,
+      "end": 50.24,
+      "text": "現在在內地網上已經找不到",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 50.24,
+      "end": 52.48,
+      "text": "又買這些牌子的美容產品",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 52.48,
+      "end": 55.6,
+      "text": "不過在台灣二手拍賣網就仍然找到",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 55.68,
+      "end": 59.92,
+      "text": "一進30g的美容商賣180元港幣左右",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 59.92,
+      "end": 61.6,
+      "text": "品牌創辦人工稱",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 61.6,
+      "end": 65.28,
+      "text": "化妝品元鳥是由一個叫做哈爾奔唐總的人",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 65.28,
+      "end": 68.24,
+      "text": "而每公斤100元人民幣的價格買入",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 68.24,
+      "end": 72.24,
+      "text": "即是每張的元鳥只需要2元到10元人民幣",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 72.24,
+      "end": 75.12,
+      "text": "這批美容產品已經賣了70多萬瓶",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 75.12,
+      "end": 77.92,
+      "text": "連同現場扣壓的10萬多瓶產品",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 77.92,
+      "end": 80.88,
+      "text": "承諾音額達到3000多萬人民幣",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 80.88,
+      "end": 84.64,
+      "text": "顯示橫跨折缸、廣東等多省的8個斗口",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 84.64,
+      "end": 86.16,
+      "text": "一共拉了10個人",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    },
+    {
+      "start": 86.16,
+      "end": 88.16,
+      "text": "另外4個人仍然在逃",
+      "speaker": null,
+      "confidence": null,
+      "language": null
+    }
+  ],
+  "frames": [
+    {
+      "timestamp": 0.0,
+      "frame_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0001.jpg",
+      "visual_tags": [
+        "frame_sample"
+      ],
+      "ocr": [],
+      "description": null
+    },
+    {
+      "timestamp": 15.0,
+      "frame_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0002.jpg",
+      "visual_tags": [
+        "frame_sample"
+      ],
+      "ocr": [],
+      "description": null
+    },
+    {
+      "timestamp": 30.0,
+      "frame_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0003.jpg",
+      "visual_tags": [
+        "frame_sample"
+      ],
+      "ocr": [],
+      "description": null
+    },
+    {
+      "timestamp": 45.0,
+      "frame_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0004.jpg",
+      "visual_tags": [
+        "frame_sample"
+      ],
+      "ocr": [],
+      "description": null
+    },
+    {
+      "timestamp": 60.0,
+      "frame_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0005.jpg",
+      "visual_tags": [
+        "frame_sample"
+      ],
+      "ocr": [],
+      "description": null
+    },
+    {
+      "timestamp": 75.0,
+      "frame_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames/frame_0006.jpg",
+      "visual_tags": [
+        "frame_sample"
+      ],
+      "ocr": [],
+      "description": null
+    }
+  ],
+  "metadata": {
+    "refinement": {
+      "engine": "ViDoveTextRefiner",
+      "status": "failed",
+      "failure_stage": "refinement_exception",
+      "notes": [
+        "Refinement failed; fell back to raw transcript: ViDove refinement failed. See: /home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/vidove_refinement/vidove_debug_manifest.json"
+      ],
+      "fallback": "raw_transcript"
+    },
+    "refinement_engine": "ViDoveTextRefiner"
+  },
+  "artifacts": {
+    "summary_md": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/summary.md",
+    "chapters_json": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/chapters.json",
+    "result_json": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/result.json",
+    "transcript_json": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/transcript.json",
+    "transcript_srt": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/transcript.srt",
+    "audio_wav": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/audio.wav",
+    "frames_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/mvp-plus-vidove-zh-news/hkcnews_china_20210203_clip120/frames"
+  }
+}
