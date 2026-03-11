@@ -9,6 +9,7 @@ This MVP is designed for **offline video understanding first**, with an upgrade 
 - audio extraction hook
 - real ASR adapter hook with fallback
 - optional ViDove refinement layer
+- optional summary-agent layer after refinement
 - frame sampling
 - OCR adapter hook with fallback
 - simple scene grouping
@@ -60,6 +61,21 @@ PYTHONPATH=. python3 entries/run_mvp.py \
   --language zh \
   --engine mvp \
   --refinement-engine vidove \
+  --summary-engine heuristic \
+  --vidove-repo ../ViDove
+```
+
+## Run with summary agent
+```bash
+PYTHONPATH=. python3 entries/run_mvp.py \
+  --video_file samples/bilibili/BV1Nb421H77B_p1_clip300.mkv \
+  --workdir runs/test-bili-summary-agent \
+  --asr-provider whisper-cli \
+  --asr-model base \
+  --language zh \
+  --engine mvp \
+  --refinement-engine vidove \
+  --summary-engine openai \
   --vidove-repo ../ViDove
 ```
 
@@ -82,6 +98,7 @@ Inside the run directory:
 - `chapters.json`
 - `result.json`
 - `manifest.json`
+- `agent_summary.json`
 
 ## Current summary/chapter behavior
 The current summary/chapter layer is still heuristic, but it is no longer just the first few lines glued together blindly.

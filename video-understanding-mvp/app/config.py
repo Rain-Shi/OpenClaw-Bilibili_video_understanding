@@ -16,4 +16,5 @@ class MVPConfig:
     language_hint: Optional[str] = None
     engine: str = 'mvp'
     refinement_engine: str = 'none'
+    summary_engine: str = 'heuristic'
     vidove_repo_dir: Optional[Path] = None

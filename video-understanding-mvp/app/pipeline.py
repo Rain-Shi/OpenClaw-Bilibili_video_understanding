@@ -10,6 +10,7 @@ from .ingest import resolve_input
 from .outputs import write_outputs
 from .refinement import NoOpRefiner, RefinementInput, RefinementOutput
 from .scene import build_simple_scenes
+from .summarizer import apply_summary_agent, merge_agent_summary
 from .understand import summarize_timeline
 from .vidove_refiner import ViDoveTextRefiner
 from .vision import sample_frames
@@ -64,6 +65,17 @@ def run_offline_video_mvp(input_value: str, config: MVPConfig) -> Path:
         },
         'refinement_engine': refinement.engine,
     })
+
+    summary_agent_result = apply_summary_agent(
+        run_dir=run_dir,
+        title=title,
+        transcript=refined_transcript,
+        timeline=timeline,
+        heuristic_result=result,
+        summary_engine=config.summary_engine,
+    )
+    result = merge_agent_summary(result, summary_agent_result)
+
     result.raw_transcript = transcript
     result.refined_transcript = refined_transcript
     result.artifacts = {
@@ -74,6 +86,7 @@ def run_offline_video_mvp(input_value: str, config: MVPConfig) -> Path:
         'transcript_srt': str(run_dir / 'transcript.srt'),
         'audio_wav': str(audio_path),
         'frames_dir': str(frames_dir),
+        'agent_summary_json': str(run_dir / 'agent_summary.json'),
         **refinement.artifacts,
     }
     write_outputs(run_dir, result)
@@ -125,6 +138,7 @@ def write_run_request(run_dir: Path, input_value: str, config: MVPConfig) -> Non
             'asr_model': config.asr_model,
             'language_hint': config.language_hint,
             'refinement_engine': config.refinement_engine,
+            'summary_engine': config.summary_engine,
         },
     }
     (run_dir / 'request.json').write_text(json.dumps(payload, ensure_ascii=False, indent=2))

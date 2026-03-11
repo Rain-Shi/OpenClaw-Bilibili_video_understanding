@@ -36,17 +36,33 @@ PYTHONPATH=. python3 entries/run_mvp.py \
   --language zh \
   --engine mvp \
   --refinement-engine vidove \
+  --summary-engine heuristic \
   --vidove-repo ../ViDove
 ```
 
-## 5. To regenerate benchmark report
+## 5. To test the summary agent layer
+```bash
+export PATH="/home/rainshi/.openclaw/workspace/.local/ffmpeg:/home/rainshi/.local/bin:$PATH"
+PYTHONPATH=. python3 entries/run_mvp.py \
+  --video_file samples/bilibili/BV1Nb421H77B_p1_clip300.mkv \
+  --workdir runs/test-bili-summary-agent \
+  --asr-provider whisper-cli \
+  --asr-model base \
+  --language zh \
+  --engine mvp \
+  --refinement-engine vidove \
+  --summary-engine openai \
+  --vidove-repo ../ViDove
+```
+
+## 6. To regenerate benchmark report
 ```bash
 PYTHONPATH=. python3 entries/run_benchmark.py \
   --manifest runs/benchmark_manifest.bilibili.v1.json \
   --out-dir runs/benchmarks/bilibili-v1-status
 ```
 
-## 6. Outputs
+## 7. Outputs
 Check the generated run directory for:
 - `summary.md`
 - `chapters.json`
@@ -56,8 +72,9 @@ Check the generated run directory for:
 - `raw_transcript.json`
 - `refined_transcript.json`
 - `manifest.json`
+- `agent_summary.json`
 
-## 7. Current known limitations
+## 8. Current known limitations
 - If dependencies are not installed, the app still runs but falls back to placeholder transcript / OCR hooks.
 - ViDove refinement may require API keys in the same shell/session if the background service environment is not configured yet.
 - Summary/chapter quality is now better than the original MVP template, but still heuristic rather than model-based.

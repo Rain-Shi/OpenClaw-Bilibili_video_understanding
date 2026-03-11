@@ -19,6 +19,7 @@ def main() -> None:
     parser.add_argument('--language', default=None, help='Optional ASR language hint, e.g. en / zh')
     parser.add_argument('--engine', default='mvp', choices=['mvp', 'vidove'])
     parser.add_argument('--refinement-engine', default='none', choices=['none', 'vidove'])
+    parser.add_argument('--summary-engine', default='heuristic', choices=['heuristic', 'openai'])
     parser.add_argument('--vidove-repo', default='../ViDove', help='Path to local ViDove repo when using --engine vidove or --refinement-engine vidove')
     args = parser.parse_args()
 
@@ -35,6 +36,7 @@ def main() -> None:
         language_hint=args.language,
         engine=args.engine,
         refinement_engine=args.refinement_engine,
+        summary_engine=args.summary_engine,
         vidove_repo_dir=Path(args.vidove_repo),
     )
     run_dir = run_with_engine(input_value, cfg)
