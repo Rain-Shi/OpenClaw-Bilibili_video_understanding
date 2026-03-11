@@ -92,6 +92,13 @@ PYTHONPATH=. python3 entries/run_benchmark.py \
 - MVP + Refinement
 - MVP + Refinement + Summary Agent
 
+同时会为每个 case 生成一份人工可读评分模板，方便记录：
+- transcript quality
+- summary quality
+- chapter quality
+- grounding / uncertainty
+- overall winner
+
 ## Output files
 Inside the run directory:
 - `bilibili_meta.json` (if Bilibili URL ingestion is used)

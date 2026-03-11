@@ -95,6 +95,14 @@ def compare_case(case: dict) -> dict:
             'refinement_chapter_delta': (refinement.get('chapter_count') or 0) - (base.get('chapter_count') or 0),
             'summary_agent_chapter_delta': (summary_agent.get('chapter_count') or 0) - (refinement.get('chapter_count') or 0),
         },
+        'score_template': {
+            'transcript_quality': {'winner': '', 'notes': ''},
+            'summary_quality': {'winner': '', 'notes': ''},
+            'chapter_quality': {'winner': '', 'notes': ''},
+            'grounding_and_uncertainty': {'winner': '', 'notes': ''},
+            'overall_winner': '',
+            'human_notes': '',
+        },
     }
 
 
@@ -138,6 +146,22 @@ def _add_engine_block(lines: list[str], label: str, data: dict, status: str, fai
     lines.append('')
 
 
+def _add_score_template(lines: list[str]) -> None:
+    lines.append('Human-readable scoring template:')
+    lines.append('')
+    lines.append('- Transcript quality winner: ______')
+    lines.append('  - Notes: ______')
+    lines.append('- Summary quality winner: ______')
+    lines.append('  - Notes: ______')
+    lines.append('- Chapter quality winner: ______')
+    lines.append('  - Notes: ______')
+    lines.append('- Grounding / uncertainty winner: ______')
+    lines.append('  - Notes: ______')
+    lines.append('- Overall winner: ______')
+    lines.append('- Human notes: ______')
+    lines.append('')
+
+
 def build_markdown(report: dict) -> str:
     lines = []
     lines.append('# Benchmark Report')
@@ -162,6 +186,7 @@ def build_markdown(report: dict) -> str:
         lines.append(f"- refinement chapter delta vs plain: {case['initial_judgment']['refinement_chapter_delta']}")
         lines.append(f"- summary-agent chapter delta vs refinement: {case['initial_judgment']['summary_agent_chapter_delta']}")
         lines.append('')
+        _add_score_template(lines)
     return '\n'.join(lines) + '\n'
 
 

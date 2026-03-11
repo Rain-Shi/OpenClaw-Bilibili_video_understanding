@@ -86,6 +86,19 @@ Delta notes:
 - refinement chapter delta vs plain: 0
 - summary-agent chapter delta vs refinement: 3
 
+Human-readable scoring template:
+
+- Transcript quality winner: ______
+  - Notes: ______
+- Summary quality winner: ______
+  - Notes: ______
+- Chapter quality winner: ______
+  - Notes: ______
+- Grounding / uncertainty winner: ______
+  - Notes: ______
+- Overall winner: ______
+- Human notes: ______
+
 ## bili_tutorial_case_01
 
 **Plain MVP**
@@ -162,4 +175,17 @@ Delta notes:
 - summary-agent timeline delta vs refinement: 0
 - refinement chapter delta vs plain: 0
 - summary-agent chapter delta vs refinement: 3
+
+Human-readable scoring template:
+
+- Transcript quality winner: ______
+  - Notes: ______
+- Summary quality winner: ______
+  - Notes: ______
+- Chapter quality winner: ______
+  - Notes: ______
+- Grounding / uncertainty winner: ______
+  - Notes: ______
+- Overall winner: ______
+- Human notes: ______
 

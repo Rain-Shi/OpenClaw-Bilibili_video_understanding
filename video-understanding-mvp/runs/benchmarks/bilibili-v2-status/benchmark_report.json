@@ -107,6 +107,26 @@
         "summary_agent_timeline_delta": 0,
         "refinement_chapter_delta": 0,
         "summary_agent_chapter_delta": 3
+      },
+      "score_template": {
+        "transcript_quality": {
+          "winner": "",
+          "notes": ""
+        },
+        "summary_quality": {
+          "winner": "",
+          "notes": ""
+        },
+        "chapter_quality": {
+          "winner": "",
+          "notes": ""
+        },
+        "grounding_and_uncertainty": {
+          "winner": "",
+          "notes": ""
+        },
+        "overall_winner": "",
+        "human_notes": ""
       }
     },
     {
@@ -208,6 +228,26 @@
         "summary_agent_timeline_delta": 0,
         "refinement_chapter_delta": 0,
         "summary_agent_chapter_delta": 3
+      },
+      "score_template": {
+        "transcript_quality": {
+          "winner": "",
+          "notes": ""
+        },
+        "summary_quality": {
+          "winner": "",
+          "notes": ""
+        },
+        "chapter_quality": {
+          "winner": "",
+          "notes": ""
+        },
+        "grounding_and_uncertainty": {
+          "winner": "",
+          "notes": ""
+        },
+        "overall_winner": "",
+        "human_notes": ""
       }
     }
   ]
