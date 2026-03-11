@@ -39,17 +39,17 @@ class ViDoveAdapter:
         output_root.mkdir(parents=True, exist_ok=True)
         launch_cfg = output_root / 'vidove_local_launch.yaml'
         launch_cfg.write_text(
-            f'local_dump: {output_root.as_posix()}\n'
+            f'local_dump: {output_root.resolve().as_posix()}\n'
             'environ: local\n'
             'api_source: openai\n'
         )
         task_cfg = self._make_local_task_cfg(output_root)
 
         cmd = [
-            str(self.python_bin), str(self.entry),
-            '--video_file', video_file,
-            '--launch_cfg', str(launch_cfg),
-            '--task_cfg', str(task_cfg),
+            str(self.python_bin), str(self.entry.resolve()),
+            '--video_file', str(Path(video_file).resolve()),
+            '--launch_cfg', str(launch_cfg.resolve()),
+            '--task_cfg', str(task_cfg.resolve()),
         ]
 
         proc = subprocess.run(

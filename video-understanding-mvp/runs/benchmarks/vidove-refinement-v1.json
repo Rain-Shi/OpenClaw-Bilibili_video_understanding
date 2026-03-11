@@ -1,0 +1,58 @@
+{
+  "name": "vidove-refinement-v1",
+  "summary": {
+    "status": "validated",
+    "judgment": "ViDove refinement is runnable and clearly improves Chinese transcript quality over raw Whisper-base output on both news and Bilibili tutorial samples.",
+    "next_bottleneck": "downstream summary/chapter quality"
+  },
+  "cases": [
+    {
+      "sample_name": "zh_news_case_manual_01",
+      "source_path": "samples/hkcnews_china_20210203_clip120.mp4",
+      "run_dir": "runs/test-refine-manual/hkcnews_china_20210203_clip120",
+      "refinement_status": "success",
+      "corrections": [
+        {
+          "raw": "未容產品",
+          "refined": "美容产品"
+        },
+        {
+          "raw": "元鳥",
+          "refined": "原料"
+        },
+        {
+          "raw": "至今臨海警方近日倒破",
+          "refined": "浙江临海警方近日捣毁"
+        }
+      ],
+      "notes": [
+        "Refined transcript is much more readable than raw Whisper-base output.",
+        "Refinement performs semantic cleanup, not just character-level correction."
+      ]
+    },
+    {
+      "sample_name": "bili_tutorial_case_manual_01",
+      "source_path": "samples/bilibili/BV1Nb421H77B_p1_clip300.mkv",
+      "run_dir": "runs/test-bili-tutorial-refine/BV1Nb421H77B_p1_clip300",
+      "refinement_status": "success",
+      "corrections": [
+        {
+          "raw": "短期视频",
+          "refined": "本期视频"
+        },
+        {
+          "raw": "请问门先给个三连吗",
+          "refined": "请问能先给个三连吗"
+        },
+        {
+          "raw": "言言下日来",
+          "refined": "炎炎夏日来临"
+        }
+      ],
+      "notes": [
+        "Gain transfers into a real Bilibili tutorial clip.",
+        "Refined transcript is cleaner and better segmented for downstream understanding."
+      ]
+    }
+  ]
+}
