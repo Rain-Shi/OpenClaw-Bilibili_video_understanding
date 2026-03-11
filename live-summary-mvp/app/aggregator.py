@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import Counter
 
-from .contracts import ChunkSummary, LiveChunk, RollingSummary
+from .contracts import ChunkSummary, CurrentState, LiveChunk, RecentRecap, RollingSummary
 from .narrative_skeleton import build_narrative_skeleton
 
 STOPWORDS = {'这个', '那个', '这里', '那里', '我们', '他们', '你们', '然后', '因为', '所以', '就是', '一个', '一种'}
@@ -120,41 +120,71 @@ def build_chunk_summaries(chunks: list[LiveChunk]) -> list[ChunkSummary]:
     return summaries
 
 
-def build_rolling_summary(stream_id: str, chunk_summaries: list[ChunkSummary], window_size: int = 5) -> RollingSummary:
+def build_current_state(stream_id: str, chunk_summaries: list[ChunkSummary]) -> CurrentState:
+    if not chunk_summaries:
+        return CurrentState(stream_id=stream_id, chunk_id='', summary='当前没有可用内容。')
+    current = chunk_summaries[-1]
+    mode = 'transition' if current.transition_signal >= 0.5 else 'ongoing'
+    focus = current.focus_points[:3]
+    if focus:
+        summary = f'现在主要在讲{focus[0]}。'
+        if len(focus) > 1:
+            summary += f' 同时也提到{focus[1]}。'
+    else:
+        summary = '当前块没有抽到稳定焦点。'
+    if current.local_open_question:
+        summary += f' 当前悬着的问题是：{current.local_open_question}。'
+    return CurrentState(
+        stream_id=stream_id,
+        chunk_id=current.chunk_id,
+        summary=summary,
+        focus_points=focus,
+        mode=mode,
+        open_question=current.local_open_question,
+    )
+
+
+def build_recent_recap(stream_id: str, chunk_summaries: list[ChunkSummary], window_size: int = 3) -> RecentRecap:
     window = chunk_summaries[-window_size:]
     all_points: list[str] = []
+    transitions = 0
     local_questions: list[str] = []
-    turning_points: list[str] = []
-    transition_count = 0
     for item in window:
         all_points.extend(item.focus_points)
-        turning_points.extend(item.local_skeleton.get('turning_points') or [])
+        if item.transition_signal >= 0.5:
+            transitions += 1
         if item.local_open_question:
             local_questions.append(item.local_open_question)
-        if item.transition_signal >= 0.5:
-            transition_count += 1
-
     counts = Counter(all_points)
-    top_points = [text for text, _ in counts.most_common(5)]
+    top_points = [text for text, _ in counts.most_common(4)]
     if top_points:
-        parts = [f'过去一段时间里，主要围绕{top_points[0]}展开。']
-        if turning_points:
-            parts.append(f'其中一个关键推进点是{turning_points[0]}。')
-        elif len(top_points) > 1:
-            parts.append(f'随后又集中提到{top_points[1]}。')
-        if transition_count:
-            parts.append('最近几段里出现了比较明显的推进或转折。')
+        parts = [f'刚刚这几段主要围绕{top_points[0]}展开。']
+        if len(top_points) > 1:
+            parts.append(f'随后又转到{top_points[1]}。')
+        if transitions:
+            parts.append('期间出现了明显的阶段推进。')
         if local_questions:
-            parts.append(f'当前仍悬着的问题是：{local_questions[-1]}。')
+            parts.append(f'最近留下的未解点是：{local_questions[-1]}。')
         summary = ''.join(parts)
     else:
-        summary = '过去一段时间里没有抽到稳定的讨论焦点。'
-
-    return RollingSummary(
+        summary = '最近几段没有抽到稳定的 recap 焦点。'
+    return RecentRecap(
         stream_id=stream_id,
         upto_seq=window[-1].seq if window else 0,
-        window_size=window_size,
         summary=summary,
         chunk_ids=[item.chunk_id for item in window],
         focus_points=top_points,
+        transitions_seen=transitions,
+    )
+
+
+def build_rolling_summary(stream_id: str, chunk_summaries: list[ChunkSummary], window_size: int = 5) -> RollingSummary:
+    recap = build_recent_recap(stream_id, chunk_summaries, window_size=window_size)
+    return RollingSummary(
+        stream_id=stream_id,
+        upto_seq=recap.upto_seq,
+        window_size=window_size,
+        summary=recap.summary,
+        chunk_ids=recap.chunk_ids,
+        focus_points=recap.focus_points,
     )

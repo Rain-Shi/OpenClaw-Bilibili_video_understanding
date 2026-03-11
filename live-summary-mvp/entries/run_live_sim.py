@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from app.aggregator import build_chunk_summaries, build_rolling_summary
+from app.aggregator import build_chunk_summaries, build_current_state, build_recent_recap, build_rolling_summary
 from app.contracts import LiveChunk
 from app.state_store import LiveStateStore
 
@@ -56,12 +56,16 @@ def main() -> None:
 
     chunks = _chunk_timeline(args.stream_id, timeline, args.chunk_seconds)
     chunk_summaries = build_chunk_summaries(chunks)
+    current_state = build_current_state(args.stream_id, chunk_summaries)
+    recent_recap = build_recent_recap(args.stream_id, chunk_summaries, window_size=args.rolling_window)
     rolling = build_rolling_summary(args.stream_id, chunk_summaries, window_size=args.rolling_window)
 
     for chunk in chunks:
         (run_dir / 'chunks' / f'{chunk.chunk_id}.json').write_text(json.dumps(chunk.to_dict(), ensure_ascii=False, indent=2), encoding='utf-8')
     for item in chunk_summaries:
         (run_dir / 'summaries' / f'{item.chunk_id}.summary.json').write_text(json.dumps(item.to_dict(), ensure_ascii=False, indent=2), encoding='utf-8')
+    (run_dir / 'summaries' / 'current_state.json').write_text(json.dumps(current_state.to_dict(), ensure_ascii=False, indent=2), encoding='utf-8')
+    (run_dir / 'summaries' / 'recent_recap.json').write_text(json.dumps(recent_recap.to_dict(), ensure_ascii=False, indent=2), encoding='utf-8')
     (run_dir / 'summaries' / 'rolling_summary.json').write_text(json.dumps(rolling.to_dict(), ensure_ascii=False, indent=2), encoding='utf-8')
 
     state_store = LiveStateStore(run_dir)
@@ -70,6 +74,8 @@ def main() -> None:
         'chunk_seconds': args.chunk_seconds,
         'chunk_count': len(chunks),
         'rolling_window': args.rolling_window,
+        'latest_current_state': current_state.to_dict(),
+        'latest_recent_recap': recent_recap.to_dict(),
         'latest_rolling_summary': rolling.to_dict(),
     })
 

@@ -47,3 +47,29 @@ class RollingSummary:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+@dataclass
+class CurrentState:
+    stream_id: str
+    chunk_id: str
+    summary: str
+    focus_points: list[str] = field(default_factory=list)
+    mode: str = 'ongoing'
+    open_question: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class RecentRecap:
+    stream_id: str
+    upto_seq: int
+    summary: str
+    chunk_ids: list[str] = field(default_factory=list)
+    focus_points: list[str] = field(default_factory=list)
+    transitions_seen: int = 0
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
