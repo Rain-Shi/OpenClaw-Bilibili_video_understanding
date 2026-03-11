@@ -224,7 +224,8 @@ def _clean_summary_sentence(text: str) -> str:
     text = ' '.join(str(text or '').split()).strip()
     for fragment in SUSPECT_FRAGMENTS:
         text = text.replace(fragment, '')
-    text = text.strip('，。；,; ')
+    text = text.replace('“”', '')
+    text = text.strip('，。；,; ') 
     return text
 
 
@@ -232,6 +233,8 @@ def _build_safe_long_summary(short_summary: str, chapter_summaries: list[str], u
     pieces: list[str] = []
     clean_short = _clean_summary_sentence(short_summary)
     if clean_short:
+        if not clean_short.endswith(('。', '！', '？')):
+            clean_short += '。'
         pieces.append(clean_short)
 
     chapter_bits = []
@@ -242,8 +245,11 @@ def _build_safe_long_summary(short_summary: str, chapter_summaries: list[str], u
     if chapter_bits:
         pieces.append('分段来看：' + '；'.join(chapter_bits) + '。')
 
-    if uncertain_points:
-        pieces.append('需要谨慎看待的内容包括：' + '；'.join(_clean_summary_sentence(item) for item in uncertain_points if _clean_summary_sentence(item)) + '。')
+    cleaned_uncertain = [
+        _clean_summary_sentence(item) for item in uncertain_points if _clean_summary_sentence(item)
+    ]
+    if cleaned_uncertain:
+        pieces.append('需要谨慎看待的内容包括：' + '；'.join(cleaned_uncertain) + '。')
 
     return ''.join(pieces)[:700]
 
