@@ -25,8 +25,20 @@ def write_outputs(run_dir: Path, result: UnderstandingResult) -> None:
     _write_json(run_dir / 'raw_transcript.json', [x.__dict__ for x in result.raw_transcript])
     _write_json(run_dir / 'refined_transcript.json', [x.__dict__ for x in result.refined_transcript])
 
+    source_info = {
+        'source': (result.metadata or {}).get('source'),
+        'source_type': (result.metadata or {}).get('source_type'),
+        'web_url': (result.metadata or {}).get('web_url'),
+        'bvid': (result.metadata or {}).get('bvid'),
+        'uploader': (result.metadata or {}).get('uploader'),
+        'duration': (result.metadata or {}).get('duration'),
+        'metadata_path': (result.metadata or {}).get('metadata_path'),
+        'subtitle_languages': (result.metadata or {}).get('subtitle_languages'),
+    }
+
     manifest = {
         'title': result.title,
+        'source': source_info,
         'refinement': (result.metadata or {}).get('refinement'),
         'summary_agent': (result.metadata or {}).get('summary_agent'),
         'artifacts': {

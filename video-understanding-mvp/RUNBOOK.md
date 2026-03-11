@@ -9,8 +9,18 @@ PYTHONPATH=. python3 entries/run_mvp.py --video_file /path/to/video.mp4
 Requires `yt-dlp`.
 
 ```bash
-PYTHONPATH=. python3 entries/run_mvp.py --bilibili_url "https://www.bilibili.com/video/BV..."
+PYTHONPATH=. python3 entries/run_mvp.py \
+  --bilibili_url "https://www.bilibili.com/video/BV..." \
+  --asr-provider whisper-cli \
+  --refinement-engine vidove \
+  --summary-engine openai \
+  --vidove-repo ../ViDove
 ```
+
+如果 `yt-dlp` 可用，当前推荐入口是直接从 Bilibili URL 走完整强链：
+- 下载到 run 目录
+- 保留 B站 metadata
+- 再进入 refinement + summary-agent
 
 ## 3. To unlock real transcript generation
 Requires:

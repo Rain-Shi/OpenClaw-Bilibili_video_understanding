@@ -47,10 +47,20 @@ This is now a **real runnable MVP path**, and the current state is stronger than
 PYTHONPATH=. python3 entries/run_mvp.py --video_file /path/to/video.mp4
 ```
 
-## Run with Bilibili URL
+## 用 Bilibili URL 直接运行
 ```bash
-PYTHONPATH=. python3 entries/run_mvp.py --bilibili_url "https://www.bilibili.com/video/BV..."
+PYTHONPATH=. python3 entries/run_mvp.py \
+  --bilibili_url "https://www.bilibili.com/video/BV..." \
+  --asr-provider whisper-cli \
+  --refinement-engine vidove \
+  --summary-engine openai \
+  --vidove-repo ../ViDove
 ```
+
+当前推荐做法是让 Bilibili URL 先通过 connector 落地到本地视频，再复用同一条最强链：
+- Whisper ASR
+- ViDove refinement
+- grounded summary agent
 
 ## Run with ViDove refinement
 ```bash
