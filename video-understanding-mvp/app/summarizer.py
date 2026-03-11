@@ -58,6 +58,7 @@ class HeuristicSummaryAgent(BaseSummaryAgent):
             extra={
                 'chapter_titles': chapter_titles,
                 'source': 'heuristic_passthrough',
+                'status': 'success',
                 'grounding_notes': ['Heuristic summary uses local deterministic rules only.'],
                 'uncertain_points': [],
             },
@@ -137,10 +138,7 @@ Rules:
         text = getattr(response, 'output_text', '') or ''
         if not text:
             raise SummaryAgentError('OpenAI summary agent returned empty output')
-        try:
-            data = json.loads(text)
-        except Exception as exc:
-            raise SummaryAgentError(f'OpenAI summary agent returned non-JSON output: {text[:400]}') from exc
+        data = _parse_json_payload(text)
 
         return SummaryResult(
             title=title,
@@ -151,6 +149,7 @@ Rules:
             extra={
                 'chapter_titles': list(data.get('chapter_titles') or [])[:8],
                 'source': 'openai',
+                'status': 'success',
                 'model': self.model,
                 'grounding_notes': list(data.get('grounding_notes') or [])[:6],
                 'uncertain_points': list(data.get('uncertain_points') or [])[:6],
@@ -175,6 +174,29 @@ def _build_grounded_transcript_preview(transcript: List[TranscriptChunk]) -> str
     return '\n'.join(f'- {text}' for text in selected)[:4200]
 
 
+def _parse_json_payload(text: str) -> dict:
+    raw = text.strip()
+    candidates = [raw]
+    if raw.startswith('```'):
+        lines = raw.splitlines()
+        if len(lines) >= 3:
+            inner = '\n'.join(lines[1:-1]).strip()
+            candidates.append(inner)
+            if inner.startswith('json'):
+                candidates.append(inner[4:].strip())
+    start = raw.find('{')
+    end = raw.rfind('}')
+    if start != -1 and end != -1 and end > start:
+        candidates.append(raw[start:end + 1])
+
+    for candidate in candidates:
+        try:
+            return json.loads(candidate)
+        except Exception:
+            continue
+    raise SummaryAgentError(f'OpenAI summary agent returned non-JSON output: {text[:400]}')
+
+
 def build_summary_agent(summary_engine: str):
     if summary_engine == 'openai':
         return OpenAISummaryAgent()
@@ -190,15 +212,32 @@ def apply_summary_agent(
     heuristic_result: UnderstandingResult,
     summary_engine: str,
 ) -> SummaryResult:
-    agent = build_summary_agent(summary_engine)
-    result = agent.summarize(
-        title=title,
-        transcript=transcript,
-        timeline=timeline,
-        heuristic_result=heuristic_result,
-    )
+    try:
+        agent = build_summary_agent(summary_engine)
+        result = agent.summarize(
+            title=title,
+            transcript=transcript,
+            timeline=timeline,
+            heuristic_result=heuristic_result,
+        )
+    except Exception as exc:
+        fallback = HeuristicSummaryAgent().summarize(
+            title=title,
+            transcript=transcript,
+            timeline=timeline,
+            heuristic_result=heuristic_result,
+        )
+        fallback.extra = {
+            **fallback.extra,
+            'status': 'failed_fallback',
+            'requested_engine': summary_engine,
+            'failure_stage': 'summary_agent_exception',
+            'failure_reason': str(exc),
+        }
+        result = fallback
+
     payload = asdict(result)
-    payload['engine'] = getattr(agent, 'name', summary_engine)
+    payload['engine'] = payload.get('extra', {}).get('source', summary_engine)
     (run_dir / 'agent_summary.json').write_text(
         json.dumps(payload, ensure_ascii=False, indent=2),
         encoding='utf-8',
@@ -211,11 +250,15 @@ def merge_agent_summary(heuristic_result: UnderstandingResult, agent_result: Sum
         **(heuristic_result.metadata or {}),
         'summary_agent': {
             'engine': agent_result.extra.get('source', 'unknown'),
+            'status': agent_result.extra.get('status', 'success'),
             'highlights': agent_result.highlights,
             'chapter_titles': agent_result.extra.get('chapter_titles', []),
             'grounding_notes': agent_result.extra.get('grounding_notes', []),
             'uncertain_points': agent_result.extra.get('uncertain_points', []),
             'suspect_fragments': agent_result.extra.get('suspect_fragments', []),
+            'failure_stage': agent_result.extra.get('failure_stage'),
+            'failure_reason': agent_result.extra.get('failure_reason'),
+            'requested_engine': agent_result.extra.get('requested_engine', agent_result.extra.get('source')),
         },
         'heuristic_summary': heuristic_result.summary,
     }
