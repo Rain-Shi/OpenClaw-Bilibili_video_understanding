@@ -73,7 +73,7 @@ Check the generated run directory for:
 - `refined_transcript.json`
 - `manifest.json`
 - `agent_summary.json`
-  - includes grounding notes / uncertain points when using `--summary-engine openai`
+  - includes grounding notes / uncertain points and full chapter title/summary rewrites when using `--summary-engine openai`
 
 ## 8. Current known limitations
 - If dependencies are not installed, the app still runs but falls back to placeholder transcript / OCR hooks.

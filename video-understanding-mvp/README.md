@@ -100,7 +100,7 @@ Inside the run directory:
 - `result.json`
 - `manifest.json`
 - `agent_summary.json`
-  - includes grounding notes and uncertain points when summary-agent mode is used
+  - includes grounding notes, uncertain points, full chapter titles, and chapter summaries when summary-agent mode is used
 
 ## Current summary/chapter behavior
 The current summary/chapter layer is still heuristic, but it is no longer just the first few lines glued together blindly.

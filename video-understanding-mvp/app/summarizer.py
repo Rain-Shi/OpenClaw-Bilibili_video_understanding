@@ -47,7 +47,8 @@ class HeuristicSummaryAgent(BaseSummaryAgent):
         timeline: List[TimelineUnit],
         heuristic_result: UnderstandingResult,
     ) -> SummaryResult:
-        chapter_titles = [chapter.title for chapter in heuristic_result.chapters[:5]]
+        chapter_titles = [chapter.title for chapter in heuristic_result.chapters]
+        chapter_summaries = [chapter.summary or '' for chapter in heuristic_result.chapters]
         highlights = [unit.speech for unit in timeline[:5] if unit.speech][:5]
         return SummaryResult(
             title=title,
@@ -57,6 +58,7 @@ class HeuristicSummaryAgent(BaseSummaryAgent):
             highlights=highlights,
             extra={
                 'chapter_titles': chapter_titles,
+                'chapter_summaries': chapter_summaries,
                 'source': 'heuristic_passthrough',
                 'status': 'success',
                 'grounding_notes': ['Heuristic summary uses local deterministic rules only.'],
@@ -90,9 +92,11 @@ class OpenAISummaryAgent(BaseSummaryAgent):
         client = OpenAI(api_key=self.api_key)
         transcript_preview = _build_grounded_transcript_preview(transcript)
         chapter_preview = '\n'.join(
-            f'- {chapter.title}: {chapter.summary or ""}' for chapter in heuristic_result.chapters[:8]
-        )[:1800]
+            f'- Chapter {idx + 1}: {chapter.title} | {chapter.summary or ""}'
+            for idx, chapter in enumerate(heuristic_result.chapters[:8])
+        )[:2200]
         suspect_hits = sorted({frag for frag in SUSPECT_FRAGMENTS if any(frag in chunk.text for chunk in transcript)})
+        chapter_count = len(heuristic_result.chapters)
 
         prompt = f"""
 You are summarizing a Chinese video understanding run.
@@ -113,7 +117,8 @@ Return strict JSON with this schema:
   "short_summary": "string",
   "long_summary": "string",
   "highlights": ["string", "string", "string"],
-  "chapter_titles": ["string", "string", "string"],
+  "chapter_titles": ["string", "string"],
+  "chapter_summaries": ["string", "string"],
   "grounding_notes": ["string", "string"],
   "uncertain_points": ["string", "string"]
 }}
@@ -124,6 +129,8 @@ Rules:
 - Keep short_summary to 2-4 sentences.
 - Keep highlights concise.
 - Chapter titles should be short, human-readable topic labels.
+- Chapter summaries should be one concise sentence each.
+- Return exactly {chapter_count} chapter_titles and exactly {chapter_count} chapter_summaries.
 - Ground every claim in the transcript evidence above.
 - Do not "fix" unclear facts by inventing details.
 - If a phrase looks noisy, avoid elevating it into the main summary.
@@ -147,7 +154,8 @@ Rules:
             keywords=heuristic_result.keywords[:10],
             highlights=list(data.get('highlights') or [])[:5],
             extra={
-                'chapter_titles': list(data.get('chapter_titles') or [])[:8],
+                'chapter_titles': _fit_length(list(data.get('chapter_titles') or []), chapter_count),
+                'chapter_summaries': _fit_length(list(data.get('chapter_summaries') or []), chapter_count),
                 'source': 'openai',
                 'status': 'success',
                 'model': self.model,
@@ -195,6 +203,13 @@ def _parse_json_payload(text: str) -> dict:
         except Exception:
             continue
     raise SummaryAgentError(f'OpenAI summary agent returned non-JSON output: {text[:400]}')
+
+
+def _fit_length(values: list[str], desired: int) -> list[str]:
+    values = [str(v).strip() for v in values if str(v).strip()]
+    if len(values) >= desired:
+        return values[:desired]
+    return values + [''] * (desired - len(values))
 
 
 def build_summary_agent(summary_engine: str):
@@ -253,6 +268,7 @@ def merge_agent_summary(heuristic_result: UnderstandingResult, agent_result: Sum
             'status': agent_result.extra.get('status', 'success'),
             'highlights': agent_result.highlights,
             'chapter_titles': agent_result.extra.get('chapter_titles', []),
+            'chapter_summaries': agent_result.extra.get('chapter_summaries', []),
             'grounding_notes': agent_result.extra.get('grounding_notes', []),
             'uncertain_points': agent_result.extra.get('uncertain_points', []),
             'suspect_fragments': agent_result.extra.get('suspect_fragments', []),
@@ -264,7 +280,10 @@ def merge_agent_summary(heuristic_result: UnderstandingResult, agent_result: Sum
     }
     heuristic_result.summary = agent_result.short_summary or heuristic_result.summary
     chapter_titles = list(agent_result.extra.get('chapter_titles') or [])
+    chapter_summaries = list(agent_result.extra.get('chapter_summaries') or [])
     for idx, chapter in enumerate(heuristic_result.chapters):
         if idx < len(chapter_titles) and chapter_titles[idx]:
             chapter.title = chapter_titles[idx]
+        if idx < len(chapter_summaries) and chapter_summaries[idx]:
+            chapter.summary = chapter_summaries[idx]
     return heuristic_result
