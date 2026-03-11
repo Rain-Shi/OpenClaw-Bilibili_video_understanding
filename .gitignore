@@ -1,0 +1,44 @@
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local environments and tool state
+.venv/
+.venv*/
+.local/
+.openclaw/
+
+# Workspace-only assistant state
+memory/
+AGENTS.md
+BOOTSTRAP.md
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+TOOLS.md
+USER.md
+
+# External repos / local sandboxes
+ViDove/
+
+# Generated run artifacts
+video-understanding-mvp/runs/**/audio.wav
+video-understanding-mvp/runs/**/frames/
+video-understanding-mvp/runs/**/asr/
+video-understanding-mvp/runs/**/vidove_refinement/
+video-understanding-mvp/runs/test-*/
+video-understanding-mvp/runs/sample-*/
+video-understanding-mvp/runs/vidove-smoke*/
+video-understanding-mvp/runs/refinement-stability-smoke*/
+video-understanding-mvp/runs/mvp-plus-vidove-zh-news/
+video-understanding-mvp/runs/regression-zh-news/
+video-understanding-mvp/runs/zh-news-natural/
+video-understanding-mvp/runs/zh-baby-120/
+video-understanding-mvp/runs/kio-120/
+video-understanding-mvp/runs/dual-track-smoke/
+video-understanding-mvp/runs/benchmarks/sample-run/
+
+# Local media cache
+video-understanding-mvp/samples/

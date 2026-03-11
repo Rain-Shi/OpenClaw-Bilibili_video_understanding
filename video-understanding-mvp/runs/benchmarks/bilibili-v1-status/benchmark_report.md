@@ -21,6 +21,16 @@ Offline MVP summary generated from transcript/timeline. Observed 125 timeline se
 
 Offline MVP summary generated from transcript/timeline. Observed 134 timeline segments. Leading spoken content: 金碧辉煌的奢侈品店来了位一桌邋遢的女人 她有路逛菜市場一般隨意擺弄 動輒一套房的名牌包 銷售好心告知不能隨意觸碰 劃壞是造价賠償 女人卻直接放下豪言 她说她要买所有我摸过的东西 女人的骚操作不止于此 
 
+**MVP chapter preview**
+- Chapter 1
+- Chapter 2
+- Chapter 3
+
+**ViDove chapter preview**
+- Chapter 1
+- Chapter 2
+- Chapter 3
+
 **MVP timeline preview**
 - 金幣繪黃的設施品店來為一座拉塔的女人
 - 她有路逛菜市場一般隨一百弄動作一套房的名牌包
@@ -47,6 +57,16 @@ Offline MVP summary generated from transcript/timeline. Observed 58 timeline seg
 **ViDove summary preview**
 
 Offline MVP summary generated from transcript/timeline. Observed 46 timeline segments. Leading spoken content: 在本期视频开始之前 请问能先给个三连吗 啊 那就给个免费的赞呗 谢啦 这对我真的很重要 炎炎夏日来临 你会选择哪种方式 
+
+**MVP chapter preview**
+- Chapter 1
+- Chapter 2
+- Chapter 3
+
+**ViDove chapter preview**
+- Chapter 1
+- Chapter 2
+- Chapter 3
 
 **MVP timeline preview**
 - 在短期视频开始之前请问门先给个三连吗
@@ -77,6 +97,10 @@ Offline MVP summary generated from transcript/timeline. Observed 46 timeline seg
 
 (empty)
 
+**MVP chapter preview**
+
+**ViDove chapter preview**
+
 **MVP timeline preview**
 
 **ViDove timeline preview**
@@ -103,6 +127,10 @@ Offline MVP summary generated from transcript/timeline. Observed 46 timeline seg
 **ViDove summary preview**
 
 (empty)
+
+**MVP chapter preview**
+
+**ViDove chapter preview**
 
 **MVP timeline preview**
 

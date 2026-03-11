@@ -8,14 +8,16 @@ This MVP is designed for **offline video understanding first**, with an upgrade 
 - connector abstraction layer
 - audio extraction hook
 - real ASR adapter hook with fallback
+- optional ViDove refinement layer
 - frame sampling
 - OCR adapter hook with fallback
 - simple scene grouping
 - timeline output
-- summary / chapter draft output
+- heuristic summary / chapter draft output
+- lightweight benchmark reporting for MVP vs ViDove comparisons
 
 ## MVP status
-This is now a **real runnable MVP path**, but some capabilities depend on local tools:
+This is now a **real runnable MVP path**, and the current state is stronger than the original placeholder-only skeleton.
 
 ### Works today in structure
 - pipeline execution
@@ -23,27 +25,49 @@ This is now a **real runnable MVP path**, but some capabilities depend on local 
 - result generation
 - fallback behavior when dependencies are missing
 - connector abstraction for future Bilibili live/browser modes
+- raw vs refined transcript recording
+- basic benchmark report generation
+
+### Recently validated
+- ViDove refinement successfully improved a Chinese news clip transcript
+- ViDove refinement successfully improved a Bilibili tutorial clip transcript
+- adapter path handling was fixed so local ViDove runs can complete when keys are available in the active shell
 
 ### Becomes truly useful when these are installed
 - `ffmpeg`
 - `yt-dlp` (for direct Bilibili URL ingestion)
 - `whisper` CLI (for real transcript generation)
+- ViDove local repo + required API keys for refinement mode
 - OCR stack later (optional)
 
 ## Run with local file
 ```bash
-python3 video-understanding-mvp/entries/run_mvp.py --video_file /path/to/video.mp4
+PYTHONPATH=. python3 entries/run_mvp.py --video_file /path/to/video.mp4
 ```
 
 ## Run with Bilibili URL
 ```bash
-python3 video-understanding-mvp/entries/run_mvp.py --bilibili_url "https://www.bilibili.com/video/BV..."
+PYTHONPATH=. python3 entries/run_mvp.py --bilibili_url "https://www.bilibili.com/video/BV..."
 ```
 
-## Recommended install for a truly usable offline MVP
+## Run with ViDove refinement
 ```bash
-sudo apt-get install ffmpeg
-pip install yt-dlp openai-whisper
+PYTHONPATH=. python3 entries/run_mvp.py \
+  --video_file samples/hkcnews_china_20210203_clip120.mp4 \
+  --workdir runs/test-refine-manual \
+  --asr-provider whisper-cli \
+  --asr-model base \
+  --language zh \
+  --engine mvp \
+  --refinement-engine vidove \
+  --vidove-repo ../ViDove
+```
+
+## Regenerate benchmark report
+```bash
+PYTHONPATH=. python3 entries/run_benchmark.py \
+  --manifest runs/benchmark_manifest.bilibili.v1.json \
+  --out-dir runs/benchmarks/bilibili-v1-status
 ```
 
 ## Output files
@@ -52,9 +76,22 @@ Inside the run directory:
 - `audio.wav`
 - `transcript.json`
 - `transcript.srt`
+- `raw_transcript.json`
+- `refined_transcript.json`
 - `summary.md`
 - `chapters.json`
 - `result.json`
+- `manifest.json`
+
+## Current summary/chapter behavior
+The current summary/chapter layer is still heuristic, but it is no longer just the first few lines glued together blindly.
+
+It now:
+- builds a structured summary from opening / midpoint / ending transcript regions
+- groups nearby timeline units into larger chapter segments
+- emits chapter titles derived from the local topic text
+
+This is still an MVP, but it is a better base for later model-based summarization.
 
 ## OCR sidecar trick (works now)
 Even without OCR installed, you can attach mock OCR per frame later by creating sidecar files like:
@@ -75,6 +112,7 @@ Bilibili URL / local video / browser session
   -> connector layer
   -> normalized media session
   -> audio extraction + ASR
+  -> optional ViDove refinement
   -> frame sampling + OCR hook
   -> scene grouping
   -> multimodal fusion
@@ -94,6 +132,7 @@ all normalize into the same internal media session contract.
 - `RUNBOOK.md`
 - `BILIBILI_CONNECTOR_DESIGN.md`
 - `adapter/VIDOVE_REUSE_MAP.md`
+- `runs/benchmarks/vidove-refinement-v1.md`
 
 ## Why ViDove is still a good base
 ViDove already gives us:

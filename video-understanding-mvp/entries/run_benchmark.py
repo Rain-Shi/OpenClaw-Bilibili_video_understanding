@@ -15,13 +15,18 @@ def summarize_result(result: dict | None) -> dict:
     chapters = result.get('chapters') or []
     transcript = result.get('transcript') or []
     summary = result.get('summary') or ''
+    refined = result.get('refined_transcript') or []
+    raw = result.get('raw_transcript') or []
     return {
         'title': result.get('title'),
         'timeline_count': len(timeline),
         'chapter_count': len(chapters),
         'transcript_count': len(transcript),
+        'raw_transcript_count': len(raw),
+        'refined_transcript_count': len(refined),
         'summary_preview': summary[:240],
         'timeline_preview': [x.get('speech', '') for x in timeline[:3]],
+        'chapter_preview': [x.get('title', '') for x in chapters[:3]],
     }
 
 
@@ -77,6 +82,7 @@ def compare_case(case: dict) -> dict:
         'initial_judgment': {
             'timeline_delta': (vidove.get('timeline_count') or 0) - (mvp.get('timeline_count') or 0),
             'chapter_delta': (vidove.get('chapter_count') or 0) - (mvp.get('chapter_count') or 0),
+            'refined_delta': (vidove.get('refined_transcript_count') or 0) - (mvp.get('refined_transcript_count') or 0),
         },
     }
 
@@ -110,6 +116,14 @@ def build_markdown(report: dict) -> str:
         lines.append('**ViDove summary preview**')
         lines.append('')
         lines.append(case['vidove']['summary_preview'] or '(empty)')
+        lines.append('')
+        lines.append('**MVP chapter preview**')
+        for item in case['mvp']['chapter_preview'] or []:
+            lines.append(f'- {item}')
+        lines.append('')
+        lines.append('**ViDove chapter preview**')
+        for item in case['vidove']['chapter_preview'] or []:
+            lines.append(f'- {item}')
         lines.append('')
         lines.append('**MVP timeline preview**')
         for item in case['mvp']['timeline_preview'] or []:
