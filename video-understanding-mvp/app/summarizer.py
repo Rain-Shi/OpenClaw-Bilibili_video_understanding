@@ -6,7 +6,9 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import List
 
+from .entity_graph import build_entity_graph
 from .models import SummaryResult, TimelineUnit, TranscriptChunk, UnderstandingResult
+from .narrative_skeleton import build_narrative_skeleton
 from .vidove_cleaner import looks_like_editorial_leak
 
 
@@ -94,6 +96,10 @@ class OpenAISummaryAgent(BaseSummaryAgent):
         transcript_preview = _build_grounded_transcript_preview(transcript)
         chapter_preview = _build_chapter_preview(heuristic_result)
         story_beats = _build_story_beats(transcript, timeline, heuristic_result)
+        narrative_skeleton_obj = build_narrative_skeleton(timeline)
+        narrative_skeleton = narrative_skeleton_obj.to_prompt_text()
+        entity_graph_obj = build_entity_graph(heuristic_result)
+        entity_graph = entity_graph_obj.to_prompt_text()
         suspect_hits = sorted({frag for frag in SUSPECT_FRAGMENTS if any(frag in chunk.text for chunk in transcript)})
         chapter_count = len(heuristic_result.chapters)
 
@@ -110,6 +116,12 @@ Heuristic chapter draft:
 
 Potential story beats extracted from the full run:
 {story_beats}
+
+Narrative skeleton candidates:
+{narrative_skeleton}
+
+Entity graph context:
+{entity_graph}
 
 Potentially noisy transcript fragments to treat with caution:
 {json.dumps(suspect_hits, ensure_ascii=False)}
@@ -128,16 +140,18 @@ Return strict JSON with this schema:
 Rules:
 - Write natural Chinese.
 - Do not mention pipeline internals.
-- Keep short_summary to 3-5 sentences.
-- short_summary must cover: setup/opening, core conflict or investigation, and where the current video segment ends.
+- Keep short_summary to 4-6 sentences.
+- short_summary must explicitly cover four parts in order: ①开场人设/设局 ②关键反转或案件出现 ③调查/真相推进 ④本期停在什么悬念或阶段。
 - Prefer describing plot progression over repeating only the opening character setup.
-- If the video is a story recap / case breakdown, mention the key turning point(s) and what is revealed later.
+- If the video is a story recap / case breakdown, mention the key turning point(s), identity reversal(s), and later revelations when supported.
+- Use the narrative skeleton candidates as a guide for plot structure, but only keep items that are supported by the evidence.
+- Use the entity graph context to keep entity references consistent; avoid merging different entities unless evidence strongly supports it.
 - Keep highlights concise, but make them span different phases of the video rather than clustering at the beginning.
 - Chapter titles should be short, human-readable topic labels.
 - Chapter summaries should be one concise sentence each.
 - Return exactly {chapter_count} chapter_titles and exactly {chapter_count} chapter_summaries.
 - Ground every claim in the transcript evidence above.
-- Do not "fix" unclear facts by inventing details.
+- Do not fix unclear facts by inventing details.
 - If a phrase looks noisy, avoid elevating it into the main summary.
 - Put suspicious or low-confidence material into uncertain_points instead of stating it as fact.
 - If evidence is weak, prefer broader wording like “视频围绕……展开” rather than specific factual claims.
@@ -147,6 +161,7 @@ Rules:
         response = client.responses.create(
             model=self.model,
             input=prompt,
+            text={"format": {"type": "json_object"}},
         )
         text = getattr(response, 'output_text', '') or ''
         if not text:
@@ -157,7 +172,12 @@ Rules:
         chapter_titles = _fit_length(list(data.get('chapter_titles') or []), chapter_count)
         chapter_summaries = _fit_length(list(data.get('chapter_summaries') or []), chapter_count)
         uncertain_points = list(data.get('uncertain_points') or [])[:6]
-        long_summary = _build_safe_long_summary(short_summary, chapter_summaries, uncertain_points)
+        long_summary = _build_safe_long_summary(
+            short_summary,
+            chapter_summaries,
+            uncertain_points,
+            raw_long_summary=data.get('long_summary'),
+        )
 
         return SummaryResult(
             title=title,
@@ -174,6 +194,19 @@ Rules:
                 'grounding_notes': list(data.get('grounding_notes') or [])[:6],
                 'uncertain_points': uncertain_points,
                 'suspect_fragments': suspect_hits,
+                'narrative_skeleton': narrative_skeleton.splitlines(),
+                'entity_graph': entity_graph_obj.to_dict(),
+                'narrative_skeleton_debug': [
+                    {
+                        'start': w.start,
+                        'end': w.end,
+                        'novelty': w.novelty,
+                        'density': w.density,
+                        'score': w.score,
+                        'texts': w.texts,
+                    }
+                    for w in narrative_skeleton_obj.debug_windows
+                ],
                 'long_summary_mode': 'safe_rebuilt',
                 'raw_long_summary': data.get('long_summary'),
             },
@@ -189,12 +222,30 @@ def _is_suspect_text(text: str) -> bool:
     return any(fragment in stripped for fragment in SUSPECT_FRAGMENTS)
 
 
+def _pick_representative_units(timeline: List[TimelineUnit], start_ratio: float, end_ratio: float, limit: int = 3) -> list[str]:
+    if not timeline:
+        return []
+    duration = max((unit.end for unit in timeline), default=0.0)
+    start_t = duration * start_ratio
+    end_t = duration * end_ratio
+    selected: list[str] = []
+    for unit in timeline:
+        text = (unit.speech or '').strip()
+        if not text or _is_suspect_text(text) or looks_like_editorial_leak(text):
+            continue
+        center = (unit.start + unit.end) / 2
+        if start_t <= center <= end_t and text not in selected:
+            selected.append(text)
+        if len(selected) >= limit:
+            break
+    return selected
+
+
 def _build_grounded_transcript_preview(transcript: List[TranscriptChunk]) -> str:
     strong = [chunk.text.strip() for chunk in transcript if chunk.text.strip() and not _is_suspect_text(chunk.text)]
     weak = [chunk.text.strip() for chunk in transcript if chunk.text.strip() and _is_suspect_text(chunk.text)]
     if not strong:
-        selected = weak[:8]
-        return '\n'.join(f'- {text}' for text in selected)[:4200]
+        return '\n'.join(f'- {text}' for text in weak[:8])[:4200]
 
     bucket_count = min(4, max(1, len(strong) // 12 + 1))
     bucket_size = max(1, len(strong) // bucket_count)
@@ -218,9 +269,7 @@ def _build_grounded_transcript_preview(transcript: List[TranscriptChunk]) -> str
 def _build_chapter_preview(heuristic_result: UnderstandingResult) -> str:
     lines = []
     for idx, chapter in enumerate(heuristic_result.chapters[:12]):
-        lines.append(
-            f'- Chapter {idx + 1}: {chapter.title} | {chapter.summary or ""} | {chapter.start:.1f}-{chapter.end:.1f}s'
-        )
+        lines.append(f'- Chapter {idx + 1}: {chapter.title} | {chapter.summary or ""} | {chapter.start:.1f}-{chapter.end:.1f}s')
     return '\n'.join(lines)[:3200]
 
 
@@ -281,7 +330,6 @@ def _parse_json_payload(text: str) -> dict:
     end = raw.rfind('}')
     if start != -1 and end != -1 and end > start:
         candidates.append(raw[start:end + 1])
-
     for candidate in candidates:
         try:
             return json.loads(candidate)
@@ -302,17 +350,28 @@ def _clean_summary_sentence(text: str) -> str:
     for fragment in SUSPECT_FRAGMENTS:
         text = text.replace(fragment, '')
     text = text.replace('“”', '')
-    text = text.strip('，。；,; ') 
+    text = text.strip('，。；,; ')
     return text
 
 
-def _build_safe_long_summary(short_summary: str, chapter_summaries: list[str], uncertain_points: list[str]) -> str:
+def _build_safe_long_summary(
+    short_summary: str,
+    chapter_summaries: list[str],
+    uncertain_points: list[str],
+    raw_long_summary: str | None = None,
+) -> str:
     pieces: list[str] = []
     clean_short = _clean_summary_sentence(short_summary)
     if clean_short:
         if not clean_short.endswith(('。', '！', '？')):
             clean_short += '。'
         pieces.append(clean_short)
+
+    raw_long = _clean_summary_sentence(raw_long_summary or '')
+    if raw_long and raw_long not in ''.join(pieces):
+        if not raw_long.endswith(('。', '！', '？')):
+            raw_long += '。'
+        pieces.append(raw_long)
 
     chapter_bits = []
     for summary in chapter_summaries[:4]:
@@ -322,13 +381,11 @@ def _build_safe_long_summary(short_summary: str, chapter_summaries: list[str], u
     if chapter_bits:
         pieces.append('分段来看：' + '；'.join(chapter_bits) + '。')
 
-    cleaned_uncertain = [
-        _clean_summary_sentence(item) for item in uncertain_points if _clean_summary_sentence(item)
-    ]
+    cleaned_uncertain = [_clean_summary_sentence(item) for item in uncertain_points if _clean_summary_sentence(item)]
     if cleaned_uncertain:
         pieces.append('需要谨慎看待的内容包括：' + '；'.join(cleaned_uncertain) + '。')
 
-    return ''.join(pieces)[:700]
+    return ''.join(pieces)[:1100]
 
 
 def build_summary_agent(summary_engine: str):
@@ -372,10 +429,7 @@ def apply_summary_agent(
 
     payload = asdict(result)
     payload['engine'] = payload.get('extra', {}).get('source', summary_engine)
-    (run_dir / 'agent_summary.json').write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2),
-        encoding='utf-8',
-    )
+    (run_dir / 'agent_summary.json').write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
     return result
 
 
@@ -395,8 +449,10 @@ def merge_agent_summary(heuristic_result: UnderstandingResult, agent_result: Sum
             'failure_reason': agent_result.extra.get('failure_reason'),
             'requested_engine': agent_result.extra.get('requested_engine', agent_result.extra.get('source')),
             'long_summary_mode': agent_result.extra.get('long_summary_mode'),
+            'entity_graph': agent_result.extra.get('entity_graph'),
         },
         'heuristic_summary': heuristic_result.summary,
+        'entity_graph': agent_result.extra.get('entity_graph'),
     }
     heuristic_result.summary = agent_result.short_summary or heuristic_result.summary
     chapter_titles = list(agent_result.extra.get('chapter_titles') or [])

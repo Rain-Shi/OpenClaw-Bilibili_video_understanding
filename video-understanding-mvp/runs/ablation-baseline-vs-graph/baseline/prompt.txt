@@ -1,0 +1,105 @@
+You are summarizing a Chinese long-form narrative/explainer video.
+
+Title: 2026 网飞爆剧！她编造的奢侈品卖遍全球，自己却惨死水沟《莎拉的真伪人生》
+
+Grounded transcript evidence (sampled across beginning, middle, and end):
+- 金碧辉煌的奢侈品店来了位穿着邋遢的女人
+- 她有如逛菜市场般随意摆弄
+- 动辄相当于一套房子的名牌包
+- 另外买包时
+- 光有以往的消费记录还不够
+- 要回那150亿
+- 其实 正式的情况是
+- 郑鲁珍在第一个月之后
+- 再没有收到分红
+- 因拿150亿
+- 帮他确认青苔女神的身份
+- 警队队长则研究起了案发地
+- 我真的会死，我真的会……
+- 我不是你的娘
+- 百貨公司的規矩
+- 怎麼會这樣呢
+- 即使抓到他，也不能把物件还给他。
+- 有了线索却不能跟进
+- 无奈的队长来到穆加希自杀地点
+- 她不再是无助的娇妻，而是巴都奥亚洲区总裁莎拉·金。
+- 他说他在逃离红尘心所以改名
+- 他还要创业
+- 希望江志焕帮助他
+- 莎拉要江志焕去接近三越百货的董事长
+- 明星
+- 政客
+- 等等
+- 迪奥
+
+Heuristic chapter draft:
+- Chapter 1: 01. 动辄相当于一套房子的名牌包 | 金碧辉煌的奢侈品店来了位穿着邋遢的女人；她有如逛菜市场般随意摆弄；动辄相当于一套房子的名牌包 | 0.7-10.4s
+- Chapter 2: 02. 她说她要买下所有我摸过的东西 | 任何损坏都需按造价赔偿；女人却直接放下豪言；她说她要买下所有我摸过的东西 | 10.4-21.6s
+- Chapter 3: 03. 原来她那脏兮兮的旅行代理 | 这么多名牌包；她竟全部用现金结账；原来她那脏兮兮的旅行代理 | 21.6-28.1s
+- Chapter 4: 04. 当销售想为她注册会员时 | 女人也不在乎积分；当销售想为她注册会员时；她只是简单告知 | 28.1-34.7s
+- Chapter 5: 05. 经常能听到莎拉·金的传奇 | 其余的信息随便填吧；从这一天开始；在城市的奢侈品一条街 | 34.7-41.6s
+- Chapter 6: 06. 每隔一段时间莎拉就会来大肆购物 | 每隔一段时间莎拉就会来大肆购物；每次都是用现金结账；在人们的口口相传中 | 41.6-49.7s
+- Chapter 7: 07. 她还是那个百年来一直向欧洲往事 | 听说她是美籍韩裔；毕业于牛津大学；她还是那个百年来一直向欧洲往事 | 49.7-56.3s
+- Chapter 8: 08. 听说这个品牌只卖给0.1%的顶级富豪 | 巴多奥亚洲区总裁；听说这个品牌只卖给0.1%的顶级富豪；如今她即将在韩国上市 | 56.3-66.9s
+
+Potential story beats extracted from the full run:
+- Around 259-261s: 只要买到爱马仕的包
+- Around 780-783s: 但是这些人买了包会在网上发帖子吗？
+- Around 1301-1304s: 原来他们会跟着一些有名的网红买东西
+- Around 1821-1824s: 他竟提出要帮金恩才杀了洪承信
+- Around 2345-2347s: 在会所得知洪承信身份的那一刻
+- Chapter beat: 01. 动辄相当于一套房子的名牌包 => 金碧辉煌的奢侈品店来了位穿着邋遢的女人；她有如逛菜市场般随意摆弄；动辄相当于一套房子的名牌包
+- Chapter beat: 02. 她说她要买下所有我摸过的东西 => 任何损坏都需按造价赔偿；女人却直接放下豪言；她说她要买下所有我摸过的东西
+- Chapter beat: 03. 原来她那脏兮兮的旅行代理 => 这么多名牌包；她竟全部用现金结账；原来她那脏兮兮的旅行代理
+- Chapter beat: 04. 当销售想为她注册会员时 => 女人也不在乎积分；当销售想为她注册会员时；她只是简单告知
+- Chapter beat: 05. 经常能听到莎拉·金的传奇 => 其余的信息随便填吧；从这一天开始；在城市的奢侈品一条街
+- Chapter beat: 06. 每隔一段时间莎拉就会来大肆购物 => 每隔一段时间莎拉就会来大肆购物；每次都是用现金结账；在人们的口口相传中
+- Chapter beat: 07. 她还是那个百年来一直向欧洲往事 => 听说她是美籍韩裔；毕业于牛津大学；她还是那个百年来一直向欧洲往事
+- Chapter beat: 08. 听说这个品牌只卖给0.1%的顶级富豪 => 巴多奥亚洲区总裁；听说这个品牌只卖给0.1%的顶级富豪；如今她即将在韩国上市
+
+Narrative skeleton candidates:
+Setup:
+- 金碧辉煌的奢侈品店来了位穿着邋遢的女人
+- 她有如逛菜市场般随意摆弄
+- 动辄相当于一套房子的名牌包
+- 销售好心告知不能随意触碰
+Developments:
+- 果不其然，警方在门店打听到包的主人名叫郑汝珍。
+- 她是韩国某国产化妆品品牌的总经理
+- 见到本人后，她说她先前已经把那只包送给莎拉
+- 警方立刻带她去认尸，因为尸体面部损毁严重。
+- 郑汝珍一下子还真没法确认这是莎拉
+Turning points:
+- 这个品牌哪是什么欧洲王室的御用贡品
+- 是莎拉自创的山寨货吧
+- 队长向领导提出
+- 穆加希一案跟莎拉案并案调查
+- 这两人分明是同一个人
+Identity/goal shifts:
+- 这个品牌哪是什么欧洲王室的御用贡品
+- 是莎拉自创的山寨货吧
+- 队长向领导提出
+- 穆加希一案跟莎拉案并案调查
+Current open questions / stopping point:
+- 队长向领导提出
+- 穆加希一案跟莎拉案并案调查
+- 这两人分明是同一个人
+
+Return strict JSON with this schema:
+{
+  "short_summary": "string",
+  "long_summary": "string",
+  "highlights": ["string", "string", "string"],
+  "chapter_titles": ["string", "string"],
+  "chapter_summaries": ["string", "string"],
+  "grounding_notes": ["string", "string"],
+  "uncertain_points": ["string", "string"]
+}
+
+Rules:
+- Write natural Chinese.
+- Keep short_summary to 4-6 sentences.
+- short_summary must explicitly cover four parts in order: ①开场人设/设局 ②关键反转或案件出现 ③调查/真相推进 ④本期停在什么悬念或阶段。
+- Return exactly 8 chapter_titles and exactly 8 chapter_summaries.
+- Ground every claim in the evidence above.
+- Do not merge different entities unless strongly supported.

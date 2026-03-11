@@ -36,6 +36,10 @@ def write_outputs(run_dir: Path, result: UnderstandingResult) -> None:
         'subtitle_languages': (result.metadata or {}).get('subtitle_languages'),
     }
 
+    entity_graph = (summary_agent or {}).get('entity_graph') or (result.metadata or {}).get('entity_graph')
+    if entity_graph:
+        _write_json(run_dir / 'entity_graph.json', entity_graph)
+
     manifest = {
         'title': result.title,
         'source': source_info,
