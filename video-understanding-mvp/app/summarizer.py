@@ -147,21 +147,29 @@ Rules:
             raise SummaryAgentError('OpenAI summary agent returned empty output')
         data = _parse_json_payload(text)
 
+        short_summary = data.get('short_summary') or heuristic_result.summary
+        chapter_titles = _fit_length(list(data.get('chapter_titles') or []), chapter_count)
+        chapter_summaries = _fit_length(list(data.get('chapter_summaries') or []), chapter_count)
+        uncertain_points = list(data.get('uncertain_points') or [])[:6]
+        long_summary = _build_safe_long_summary(short_summary, chapter_summaries, uncertain_points)
+
         return SummaryResult(
             title=title,
-            short_summary=data.get('short_summary') or heuristic_result.summary,
-            long_summary=data.get('long_summary'),
+            short_summary=short_summary,
+            long_summary=long_summary,
             keywords=heuristic_result.keywords[:10],
             highlights=list(data.get('highlights') or [])[:5],
             extra={
-                'chapter_titles': _fit_length(list(data.get('chapter_titles') or []), chapter_count),
-                'chapter_summaries': _fit_length(list(data.get('chapter_summaries') or []), chapter_count),
+                'chapter_titles': chapter_titles,
+                'chapter_summaries': chapter_summaries,
                 'source': 'openai',
                 'status': 'success',
                 'model': self.model,
                 'grounding_notes': list(data.get('grounding_notes') or [])[:6],
-                'uncertain_points': list(data.get('uncertain_points') or [])[:6],
+                'uncertain_points': uncertain_points,
                 'suspect_fragments': suspect_hits,
+                'long_summary_mode': 'safe_rebuilt',
+                'raw_long_summary': data.get('long_summary'),
             },
         )
 
@@ -210,6 +218,34 @@ def _fit_length(values: list[str], desired: int) -> list[str]:
     if len(values) >= desired:
         return values[:desired]
     return values + [''] * (desired - len(values))
+
+
+def _clean_summary_sentence(text: str) -> str:
+    text = ' '.join(str(text or '').split()).strip()
+    for fragment in SUSPECT_FRAGMENTS:
+        text = text.replace(fragment, '')
+    text = text.strip('，。；,; ')
+    return text
+
+
+def _build_safe_long_summary(short_summary: str, chapter_summaries: list[str], uncertain_points: list[str]) -> str:
+    pieces: list[str] = []
+    clean_short = _clean_summary_sentence(short_summary)
+    if clean_short:
+        pieces.append(clean_short)
+
+    chapter_bits = []
+    for summary in chapter_summaries[:4]:
+        cleaned = _clean_summary_sentence(summary)
+        if cleaned and cleaned not in chapter_bits:
+            chapter_bits.append(cleaned)
+    if chapter_bits:
+        pieces.append('分段来看：' + '；'.join(chapter_bits) + '。')
+
+    if uncertain_points:
+        pieces.append('需要谨慎看待的内容包括：' + '；'.join(_clean_summary_sentence(item) for item in uncertain_points if _clean_summary_sentence(item)) + '。')
+
+    return ''.join(pieces)[:700]
 
 
 def build_summary_agent(summary_engine: str):
@@ -275,6 +311,7 @@ def merge_agent_summary(heuristic_result: UnderstandingResult, agent_result: Sum
             'failure_stage': agent_result.extra.get('failure_stage'),
             'failure_reason': agent_result.extra.get('failure_reason'),
             'requested_engine': agent_result.extra.get('requested_engine', agent_result.extra.get('source')),
+            'long_summary_mode': agent_result.extra.get('long_summary_mode'),
         },
         'heuristic_summary': heuristic_result.summary,
     }
