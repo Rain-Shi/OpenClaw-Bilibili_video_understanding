@@ -1,0 +1,24 @@
+{
+  "stream_id": "bili-bv1od",
+  "chunk_seconds": 300,
+  "chunk_count": 9,
+  "rolling_window": 3,
+  "latest_rolling_summary": {
+    "stream_id": "bili-bv1od",
+    "upto_seq": 9,
+    "window_size": 3,
+    "summary": "过去一段时间里，主要围绕某天他又偷偷溜出来吃东西展开。其中一个关键推进点是但他只想为董事长一人服务。最近几段里出现了比较明显的推进或转折。当前仍悬着的问题是：下雪刀的尸体究竟是谁？。",
+    "chunk_ids": [
+      "chunk_0007",
+      "chunk_0008",
+      "chunk_0009"
+    ],
+    "focus_points": [
+      "某天他又偷偷溜出来吃东西",
+      "江志焕意外看到",
+      "金恩才的手臂上有针眼",
+      "这个伤痕太熟悉了",
+      "她可以直说是买论文才顺利毕业"
+    ]
+  }
+}
