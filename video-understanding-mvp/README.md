@@ -10,6 +10,7 @@ This MVP is designed for **offline video understanding first**, with an upgrade 
 - real ASR adapter hook with fallback
 - optional ViDove refinement layer
 - optional summary-agent layer after refinement
+- grounding / anti-hallucination guardrails for agent summaries
 - frame sampling
 - OCR adapter hook with fallback
 - simple scene grouping
@@ -99,6 +100,7 @@ Inside the run directory:
 - `result.json`
 - `manifest.json`
 - `agent_summary.json`
+  - includes grounding notes and uncertain points when summary-agent mode is used
 
 ## Current summary/chapter behavior
 The current summary/chapter layer is still heuristic, but it is no longer just the first few lines glued together blindly.

@@ -73,8 +73,10 @@ Check the generated run directory for:
 - `refined_transcript.json`
 - `manifest.json`
 - `agent_summary.json`
+  - includes grounding notes / uncertain points when using `--summary-engine openai`
 
 ## 8. Current known limitations
 - If dependencies are not installed, the app still runs but falls back to placeholder transcript / OCR hooks.
 - ViDove refinement may require API keys in the same shell/session if the background service environment is not configured yet.
-- Summary/chapter quality is now better than the original MVP template, but still heuristic rather than model-based.
+- The OpenAI summary agent is now grounded more tightly to transcript evidence, but it can still inherit upstream transcript noise if the source text is poor.
+- Summary/chapter quality is now better than the original MVP template, but should still be benchmarked on real Bilibili samples.
