@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import List
 
 from .models import SummaryResult, TimelineUnit, TranscriptChunk, UnderstandingResult
+from .vidove_cleaner import looks_like_editorial_leak
 
 
 class SummaryAgentError(RuntimeError):
@@ -91,23 +92,24 @@ class OpenAISummaryAgent(BaseSummaryAgent):
 
         client = OpenAI(api_key=self.api_key)
         transcript_preview = _build_grounded_transcript_preview(transcript)
-        chapter_preview = '\n'.join(
-            f'- Chapter {idx + 1}: {chapter.title} | {chapter.summary or ""}'
-            for idx, chapter in enumerate(heuristic_result.chapters[:8])
-        )[:2200]
+        chapter_preview = _build_chapter_preview(heuristic_result)
+        story_beats = _build_story_beats(transcript, timeline, heuristic_result)
         suspect_hits = sorted({frag for frag in SUSPECT_FRAGMENTS if any(frag in chunk.text for chunk in transcript)})
         chapter_count = len(heuristic_result.chapters)
 
         prompt = f"""
-You are summarizing a Chinese video understanding run.
+You are summarizing a Chinese long-form narrative/explainer video.
 
 Title: {title}
 
-Grounded transcript evidence:
+Grounded transcript evidence (sampled across beginning, middle, and end):
 {transcript_preview}
 
 Heuristic chapter draft:
 {chapter_preview}
+
+Potential story beats extracted from the full run:
+{story_beats}
 
 Potentially noisy transcript fragments to treat with caution:
 {json.dumps(suspect_hits, ensure_ascii=False)}
@@ -126,8 +128,11 @@ Return strict JSON with this schema:
 Rules:
 - Write natural Chinese.
 - Do not mention pipeline internals.
-- Keep short_summary to 2-4 sentences.
-- Keep highlights concise.
+- Keep short_summary to 3-5 sentences.
+- short_summary must cover: setup/opening, core conflict or investigation, and where the current video segment ends.
+- Prefer describing plot progression over repeating only the opening character setup.
+- If the video is a story recap / case breakdown, mention the key turning point(s) and what is revealed later.
+- Keep highlights concise, but make them span different phases of the video rather than clustering at the beginning.
 - Chapter titles should be short, human-readable topic labels.
 - Chapter summaries should be one concise sentence each.
 - Return exactly {chapter_count} chapter_titles and exactly {chapter_count} chapter_summaries.
@@ -136,6 +141,7 @@ Rules:
 - If a phrase looks noisy, avoid elevating it into the main summary.
 - Put suspicious or low-confidence material into uncertain_points instead of stating it as fact.
 - If evidence is weak, prefer broader wording like “视频围绕……展开” rather than specific factual claims.
+- Avoid ending the summary with generic uploader outro/call-to-action language.
 """.strip()
 
         response = client.responses.create(
@@ -186,8 +192,79 @@ def _is_suspect_text(text: str) -> bool:
 def _build_grounded_transcript_preview(transcript: List[TranscriptChunk]) -> str:
     strong = [chunk.text.strip() for chunk in transcript if chunk.text.strip() and not _is_suspect_text(chunk.text)]
     weak = [chunk.text.strip() for chunk in transcript if chunk.text.strip() and _is_suspect_text(chunk.text)]
-    selected = strong[:18] + weak[:4]
-    return '\n'.join(f'- {text}' for text in selected)[:4200]
+    if not strong:
+        selected = weak[:8]
+        return '\n'.join(f'- {text}' for text in selected)[:4200]
+
+    bucket_count = min(4, max(1, len(strong) // 12 + 1))
+    bucket_size = max(1, len(strong) // bucket_count)
+    sampled: list[str] = []
+    for idx in range(bucket_count):
+        start = idx * bucket_size
+        end = len(strong) if idx == bucket_count - 1 else min(len(strong), (idx + 1) * bucket_size)
+        bucket = strong[start:end]
+        if not bucket:
+            continue
+        head = bucket[:3]
+        mid = bucket[max(0, len(bucket) // 2 - 1): max(0, len(bucket) // 2 - 1) + 2]
+        tail = bucket[-2:]
+        for text in head + mid + tail:
+            if text and text not in sampled:
+                sampled.append(text)
+    selected = sampled[:24] + [text for text in weak[:4] if text not in sampled]
+    return '\n'.join(f'- {text}' for text in selected)[:5200]
+
+
+def _build_chapter_preview(heuristic_result: UnderstandingResult) -> str:
+    lines = []
+    for idx, chapter in enumerate(heuristic_result.chapters[:12]):
+        lines.append(
+            f'- Chapter {idx + 1}: {chapter.title} | {chapter.summary or ""} | {chapter.start:.1f}-{chapter.end:.1f}s'
+        )
+    return '\n'.join(lines)[:3200]
+
+
+def _build_story_beats(
+    transcript: List[TranscriptChunk],
+    timeline: List[TimelineUnit],
+    heuristic_result: UnderstandingResult,
+) -> str:
+    duration = 0.0
+    if transcript:
+        duration = max(chunk.end for chunk in transcript)
+    elif timeline:
+        duration = max(unit.end for unit in timeline)
+
+    anchors = [0.1, 0.3, 0.5, 0.7, 0.9]
+    beats: list[str] = []
+    for anchor in anchors:
+        target = duration * anchor
+        best = None
+        best_dist = None
+        for unit in timeline:
+            text = (unit.speech or '').strip()
+            if not text or _is_suspect_text(text) or looks_like_editorial_leak(text):
+                continue
+            center = (unit.start + unit.end) / 2
+            dist = abs(center - target)
+            if best is None or dist < best_dist:
+                best = unit
+                best_dist = dist
+        if best:
+            beats.append(f'- Around {best.start:.0f}-{best.end:.0f}s: {best.speech}')
+
+    for chapter in heuristic_result.chapters[:8]:
+        summary = (chapter.summary or '').strip()
+        if summary and summary not in ''.join(beats):
+            beats.append(f'- Chapter beat: {chapter.title} => {summary}')
+
+    deduped: list[str] = []
+    seen = set()
+    for beat in beats:
+        if beat not in seen:
+            deduped.append(beat)
+            seen.add(beat)
+    return '\n'.join(deduped)[:3200]
 
 
 def _parse_json_payload(text: str) -> dict:
