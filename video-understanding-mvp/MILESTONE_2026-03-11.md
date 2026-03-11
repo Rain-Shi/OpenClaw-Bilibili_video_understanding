@@ -109,10 +109,11 @@ This is the strongest evidence in the phase because it shows the design generali
 ### Phase A — Stabilize this milestone
 1. Push the current local commits to GitHub.
 2. Re-run one tutorial case and one commentary case after the last safe-long-summary formatting change.
-3. Update benchmark notes so they explicitly mention:
-   - summary-agent status
-   - uncertain-points quality
-   - chapter-title / chapter-summary coverage
+3. Upgrade benchmark notes so they compare three tracks explicitly:
+   - plain MVP
+   - MVP + refinement
+   - MVP + refinement + summary agent
+4. Record summary-agent status, uncertain-point quality, and chapter-title / chapter-summary coverage in the report.
 
 ### Phase B — Move from local clips toward real Bilibili ingestion
 1. Connect the improved pipeline to the Bilibili URL ingestion path.

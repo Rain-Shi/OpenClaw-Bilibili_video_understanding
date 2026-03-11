@@ -1,13 +1,14 @@
 {
   "meta": {
-    "name": "bilibili-benchmark-v1",
-    "description": "Initial benchmark manifest for Bilibili-targeted video understanding comparison between MVP and ViDove.",
-    "version": "1.0",
+    "name": "bilibili-benchmark-v2",
+    "description": "Benchmark manifest for three-track Bilibili video understanding comparison: plain MVP, refinement, and summary-agent outputs.",
+    "version": "2.0",
     "notes": [
-      "This manifest is for case organization first, not full automatic scoring yet.",
-      "Fill mvp_dir and vidove_dir after both engines have been run on the same sample.",
-      "Use expected_challenges to explain why a sample is valuable.",
-      "The first batch below contains selected Bilibili-style candidates chosen for representative coverage, not yet fully resolved to final BV IDs/URLs."
+      "Each configured case can point to up to three run directories.",
+      "plain_mvp_dir = raw MVP without refinement.",
+      "refinement_dir = MVP + ViDove refinement.",
+      "summary_agent_dir = MVP + ViDove refinement + summary agent.",
+      "Use expected_challenges to document why a case matters."
     ]
   },
   "selection_criteria": {
@@ -28,16 +29,6 @@
       "Should have clear topic structure or steps.",
       "Should be suitable for chapter segmentation evaluation.",
       "Prefer videos with moderate screen text or technical vocabulary."
-    ],
-    "context_heavy_case": [
-      "Should reflect stronger Bilibili platform flavor or internet-context dependence.",
-      "Prefer samples where plain transcript alone may miss part of the meaning.",
-      "Can include meme-heavy or cultural-context-heavy explanation."
-    ],
-    "live_mock_case": [
-      "Should be longer and more conversational.",
-      "Should resemble a stream clip, podcast clip, or long unscripted commentary.",
-      "Useful for future migration toward rolling or live summarization."
     ]
   },
   "cases": [
@@ -52,15 +43,17 @@
       "source_url": "https://www.bilibili.com/video/BV1odNgzpEm3/",
       "bvid": "BV1odNgzpEm3",
       "source_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/samples/bilibili/BV1odNgzpEm3_clip300.mkv",
-      "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-mvp/BV1odNgzpEm3_clip300",
-      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-vidove/vidove_runs/task_e9542727-9997-449f-8f36-bb5d7f9e2a38",
+      "plain_mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-mvp/BV1odNgzpEm3_clip300",
+      "refinement_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-commentary-01-vidove/vidove_runs/task_e9542727-9997-449f-8f36-bb5d7f9e2a38",
+      "summary_agent_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/test-bili-commentary-summary-agent/BV1odNgzpEm3_clip300",
       "reference_transcript": null,
       "reference_summary": null,
-      "notes": "Chinese commentary / explanation video close to the target Bilibili understanding scenario. Selected because it is narration-heavy, internet-native, and close to the intended Bilibili summary use case.",
+      "notes": "Narration-heavy Bilibili commentary sample used to compare raw MVP, transcript refinement, and grounded summary-agent output.",
       "expected_challenges": [
         "fast speech",
         "internet slang",
-        "named entities"
+        "named entities",
+        "story-style narration"
       ]
     },
     {
@@ -74,59 +67,17 @@
       "source_url": "https://www.bilibili.com/video/BV1Nb421H77B/",
       "bvid": "BV1Nb421H77B",
       "source_path": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/samples/bilibili/BV1Nb421H77B_p1_clip300.mkv",
-      "mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-tutorial-01-mvp/BV1Nb421H77B_p1_clip300",
-      "vidove_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-tutorial-01-vidove/vidove_runs/task_e539e28b-6bf0-4bc9-bcae-a74d20fefb46",
+      "plain_mvp_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/bili-tutorial-01-mvp/BV1Nb421H77B_p1_clip300",
+      "refinement_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/test-bili-tutorial-refine/BV1Nb421H77B_p1_clip300",
+      "summary_agent_dir": "/home/rainshi/.openclaw/workspace/video-understanding-mvp/runs/test-bili-summary-agent-grounded-v3/BV1Nb421H77B_p1_clip300",
       "reference_transcript": null,
       "reference_summary": null,
-      "notes": "Chinese tutorial / knowledge-sharing candidate with very clear structure. Good for chapter quality, topic segmentation, and future OCR/screen-text fusion. First-round use should clip only a short segment rather than run the full video.",
+      "notes": "Structured tutorial sample used to compare chapter quality and grounded summary quality across all three tracks.",
       "expected_challenges": [
         "technical terms",
         "screen text",
-        "structured explanation"
-      ]
-    },
-    {
-      "sample_name": "bili_context_heavy_case_01",
-      "input_type": "bilibili_video",
-      "language": "zh",
-      "category": "bilibili_context_heavy",
-      "goal": "platform_context_fusion",
-      "candidate_title": "一口气看完《除恶》：2026悬疑新剧，精彩到炸，全员恶人，一集就上头。",
-      "candidate_uploader": "喵喵剪影Zzz",
-      "source_url": null,
-      "bvid": null,
-      "source_path": null,
-      "mvp_dir": null,
-      "vidove_dir": null,
-      "reference_transcript": null,
-      "reference_summary": null,
-      "notes": "Bilibili-style context-heavy candidate with stronger platform flavor. Useful for testing internet-style framing, title-summary alignment, and eventual danmaku/comment fusion potential.",
-      "expected_challenges": [
-        "platform slang",
-        "implicit context",
-        "summary grounding"
-      ]
-    },
-    {
-      "sample_name": "bili_live_mock_case_01",
-      "input_type": "bilibili_video",
-      "language": "zh",
-      "category": "bilibili_live_mock",
-      "goal": "long_context",
-      "candidate_title": "【阿斗】爆肝4个月，世界评分最高的电视剧一次看爽！详细解说《绝命毒师》1-5季",
-      "candidate_uploader": "阿斗归来了",
-      "source_url": null,
-      "bvid": null,
-      "source_path": null,
-      "mvp_dir": null,
-      "vidove_dir": null,
-      "reference_transcript": null,
-      "reference_summary": null,
-      "notes": "Long-form commentary candidate chosen as a bridge toward future live-summary evaluation. It should be clipped to a representative 3-5 minute span for the first benchmark round.",
-      "expected_challenges": [
-        "casual speech",
-        "topic drift",
-        "long context"
+        "structured explanation",
+        "chapter quality"
       ]
     }
   ]

@@ -59,8 +59,13 @@ PYTHONPATH=. python3 entries/run_mvp.py \
 ```bash
 PYTHONPATH=. python3 entries/run_benchmark.py \
   --manifest runs/benchmark_manifest.bilibili.v1.json \
-  --out-dir runs/benchmarks/bilibili-v1-status
+  --out-dir runs/benchmarks/bilibili-v2-status
 ```
+
+默认会比较三条链：
+- Plain MVP
+- MVP + Refinement
+- MVP + Refinement + Summary Agent
 
 ## 7. Outputs
 Check the generated run directory for:

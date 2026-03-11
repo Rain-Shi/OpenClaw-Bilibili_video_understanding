@@ -5,6 +5,13 @@ import json
 from pathlib import Path
 
 
+ENGINE_SLOTS = [
+    ('plain_mvp', 'plain_mvp_dir', 'Plain MVP'),
+    ('refinement', 'refinement_dir', 'MVP + Refinement'),
+    ('summary_agent', 'summary_agent_dir', 'MVP + Refinement + Summary Agent'),
+]
+
+
 def load_json(path: Path):
     return json.loads(path.read_text(encoding='utf-8')) if path.exists() else None
 
@@ -17,6 +24,8 @@ def summarize_result(result: dict | None) -> dict:
     summary = result.get('summary') or ''
     refined = result.get('refined_transcript') or []
     raw = result.get('raw_transcript') or []
+    metadata = result.get('metadata') or {}
+    summary_agent = metadata.get('summary_agent') or {}
     return {
         'title': result.get('title'),
         'timeline_count': len(timeline),
@@ -27,64 +36,106 @@ def summarize_result(result: dict | None) -> dict:
         'summary_preview': summary[:240],
         'timeline_preview': [x.get('speech', '') for x in timeline[:3]],
         'chapter_preview': [x.get('title', '') for x in chapters[:3]],
+        'summary_agent_status': summary_agent.get('status'),
+        'uncertain_points': summary_agent.get('uncertain_points') or [],
+        'grounding_notes': summary_agent.get('grounding_notes') or [],
     }
 
 
-def infer_status(case: dict, engine_name: str, result_path: Path) -> tuple[str, str | None, list[str]]:
+def infer_status(case: dict, engine_key: str, dir_key: str, result_path: Path) -> tuple[str, str | None, list[str]]:
     notes = []
-    declared = (case.get('status') or {}).get(engine_name)
+    declared = ((case.get('status') or {}).get(engine_key))
     if declared:
-        return declared, case.get('failure_stage'), notes
+        return declared, (case.get('failure_stage') or {}).get(engine_key), notes
     if result_path.exists():
         return 'success', None, notes
-    raw_dir = case.get(f'{engine_name}_dir')
+    raw_dir = case.get(dir_key)
     if not raw_dir:
-        notes.append(f'{engine_name}_dir is not set yet')
+        notes.append(f'{dir_key} is not set yet')
         return 'missing', 'unconfigured_case', notes
     engine_dir = Path(raw_dir)
     if engine_dir.exists():
-        notes.append(f'{engine_name} directory exists but result.json is missing')
+        notes.append(f'{engine_key} directory exists but result.json is missing')
         return 'partial', 'result_export', notes
     return 'failed', 'missing_output_dir', notes
 
 
 def compare_case(case: dict) -> dict:
-    name = case['sample_name']
-    mvp_dir = Path(case['mvp_dir']) if case.get('mvp_dir') else Path('.')
-    vidove_dir = Path(case['vidove_dir']) if case.get('vidove_dir') else Path('.')
+    compared = {}
+    statuses = {}
+    failure_stage = {}
+    notes = {}
+    dirs = {}
 
-    mvp_result_path = mvp_dir / 'result.json' if case.get('mvp_dir') else Path('__missing_mvp__/result.json')
-    vidove_result_path = vidove_dir / 'result.json' if case.get('vidove_dir') else Path('__missing_vidove__/result.json')
+    for engine_key, dir_key, _label in ENGINE_SLOTS:
+        engine_dir = Path(case[dir_key]) if case.get(dir_key) else Path('.')
+        result_path = engine_dir / 'result.json' if case.get(dir_key) else Path(f'__missing_{engine_key}__/result.json')
+        status, failure, engine_notes = infer_status(case, engine_key, dir_key, result_path)
+        compared[engine_key] = summarize_result(load_json(result_path))
+        statuses[engine_key] = status
+        failure_stage[engine_key] = failure
+        notes[engine_key] = engine_notes
+        dirs[engine_key] = str(engine_dir)
 
-    mvp_status, mvp_failure_stage, mvp_notes = infer_status(case, 'mvp', mvp_result_path)
-    vidove_status, vidove_failure_stage, vidove_notes = infer_status(case, 'vidove', vidove_result_path)
-
-    mvp = summarize_result(load_json(mvp_result_path))
-    vidove = summarize_result(load_json(vidove_result_path))
+    base = compared['plain_mvp']
+    refinement = compared['refinement']
+    summary_agent = compared['summary_agent']
     return {
-        'sample_name': name,
-        'mvp_dir': str(mvp_dir),
-        'vidove_dir': str(vidove_dir),
-        'status': {
-            'mvp': mvp_status,
-            'vidove': vidove_status,
-        },
-        'failure_stage': {
-            'mvp': mvp_failure_stage,
-            'vidove': vidove_failure_stage,
-        },
-        'notes': {
-            'mvp': mvp_notes,
-            'vidove': vidove_notes,
-        },
-        'mvp': mvp,
-        'vidove': vidove,
+        'sample_name': case['sample_name'],
+        'dirs': dirs,
+        'status': statuses,
+        'failure_stage': failure_stage,
+        'notes': notes,
+        'plain_mvp': base,
+        'refinement': refinement,
+        'summary_agent': summary_agent,
         'initial_judgment': {
-            'timeline_delta': (vidove.get('timeline_count') or 0) - (mvp.get('timeline_count') or 0),
-            'chapter_delta': (vidove.get('chapter_count') or 0) - (mvp.get('chapter_count') or 0),
-            'refined_delta': (vidove.get('refined_transcript_count') or 0) - (mvp.get('refined_transcript_count') or 0),
+            'refinement_timeline_delta': (refinement.get('timeline_count') or 0) - (base.get('timeline_count') or 0),
+            'summary_agent_timeline_delta': (summary_agent.get('timeline_count') or 0) - (refinement.get('timeline_count') or 0),
+            'refinement_chapter_delta': (refinement.get('chapter_count') or 0) - (base.get('chapter_count') or 0),
+            'summary_agent_chapter_delta': (summary_agent.get('chapter_count') or 0) - (refinement.get('chapter_count') or 0),
         },
     }
+
+
+def _add_engine_block(lines: list[str], label: str, data: dict, status: str, failure: str | None, notes: list[str]) -> None:
+    lines.append(f'**{label}**')
+    lines.append('')
+    lines.append(f'- status: {status}')
+    if failure:
+        lines.append(f'- failure stage: {failure}')
+    lines.append(f'- timeline: {data.get("timeline_count")}')
+    lines.append(f'- chapters: {data.get("chapter_count")}')
+    lines.append(f'- transcript: {data.get("transcript_count")}')
+    if data.get('summary_agent_status'):
+        lines.append(f'- summary-agent status: {data.get("summary_agent_status")}')
+    lines.append('')
+    lines.append('summary preview:')
+    lines.append(data.get('summary_preview') or '(empty)')
+    lines.append('')
+    lines.append('chapter preview:')
+    for item in data.get('chapter_preview') or []:
+        lines.append(f'- {item}')
+    lines.append('')
+    lines.append('timeline preview:')
+    for item in data.get('timeline_preview') or []:
+        lines.append(f'- {item}')
+    if data.get('grounding_notes'):
+        lines.append('')
+        lines.append('grounding notes:')
+        for item in data.get('grounding_notes')[:3]:
+            lines.append(f'- {item}')
+    if data.get('uncertain_points'):
+        lines.append('')
+        lines.append('uncertain points:')
+        for item in data.get('uncertain_points')[:3]:
+            lines.append(f'- {item}')
+    if notes:
+        lines.append('')
+        lines.append('execution notes:')
+        for item in notes:
+            lines.append(f'- {item}')
+    lines.append('')
 
 
 def build_markdown(report: dict) -> str:
@@ -93,58 +144,29 @@ def build_markdown(report: dict) -> str:
     lines.append('')
     lines.append(f"Cases: {len(report['cases'])}")
     lines.append('')
-    lines.append('## Overview')
+    lines.append('## Comparison axes')
+    lines.append('')
+    lines.append('- Plain MVP')
+    lines.append('- MVP + Refinement')
+    lines.append('- MVP + Refinement + Summary Agent')
     lines.append('')
     for case in report['cases']:
-        lines.append(f"### {case['sample_name']}")
+        lines.append(f"## {case['sample_name']}")
         lines.append('')
-        lines.append(f"- MVP status: {case['status']['mvp']}")
-        lines.append(f"- ViDove status: {case['status']['vidove']}")
-        if case['failure_stage']['mvp']:
-            lines.append(f"- MVP failure stage: {case['failure_stage']['mvp']}")
-        if case['failure_stage']['vidove']:
-            lines.append(f"- ViDove failure stage: {case['failure_stage']['vidove']}")
-        lines.append(f"- MVP timeline: {case['mvp']['timeline_count']}")
-        lines.append(f"- ViDove timeline: {case['vidove']['timeline_count']}")
-        lines.append(f"- MVP chapters: {case['mvp']['chapter_count']}")
-        lines.append(f"- ViDove chapters: {case['vidove']['chapter_count']}")
+        _add_engine_block(lines, 'Plain MVP', case['plain_mvp'], case['status']['plain_mvp'], case['failure_stage']['plain_mvp'], case['notes']['plain_mvp'])
+        _add_engine_block(lines, 'MVP + Refinement', case['refinement'], case['status']['refinement'], case['failure_stage']['refinement'], case['notes']['refinement'])
+        _add_engine_block(lines, 'MVP + Refinement + Summary Agent', case['summary_agent'], case['status']['summary_agent'], case['failure_stage']['summary_agent'], case['notes']['summary_agent'])
+        lines.append('Delta notes:')
+        lines.append(f"- refinement timeline delta vs plain: {case['initial_judgment']['refinement_timeline_delta']}")
+        lines.append(f"- summary-agent timeline delta vs refinement: {case['initial_judgment']['summary_agent_timeline_delta']}")
+        lines.append(f"- refinement chapter delta vs plain: {case['initial_judgment']['refinement_chapter_delta']}")
+        lines.append(f"- summary-agent chapter delta vs refinement: {case['initial_judgment']['summary_agent_chapter_delta']}")
         lines.append('')
-        lines.append('**MVP summary preview**')
-        lines.append('')
-        lines.append(case['mvp']['summary_preview'] or '(empty)')
-        lines.append('')
-        lines.append('**ViDove summary preview**')
-        lines.append('')
-        lines.append(case['vidove']['summary_preview'] or '(empty)')
-        lines.append('')
-        lines.append('**MVP chapter preview**')
-        for item in case['mvp']['chapter_preview'] or []:
-            lines.append(f'- {item}')
-        lines.append('')
-        lines.append('**ViDove chapter preview**')
-        for item in case['vidove']['chapter_preview'] or []:
-            lines.append(f'- {item}')
-        lines.append('')
-        lines.append('**MVP timeline preview**')
-        for item in case['mvp']['timeline_preview'] or []:
-            lines.append(f'- {item}')
-        lines.append('')
-        lines.append('**ViDove timeline preview**')
-        for item in case['vidove']['timeline_preview'] or []:
-            lines.append(f'- {item}')
-        lines.append('')
-        if case['notes']['mvp'] or case['notes']['vidove']:
-            lines.append('**Execution notes**')
-            for item in case['notes']['mvp']:
-                lines.append(f'- MVP: {item}')
-            for item in case['notes']['vidove']:
-                lines.append(f'- ViDove: {item}')
-            lines.append('')
     return '\n'.join(lines) + '\n'
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Run a lightweight benchmark report over multiple MVP/ViDove result pairs')
+    parser = argparse.ArgumentParser(description='Run a lightweight benchmark report over plain/refinement/summary-agent result triples')
     parser.add_argument('--manifest', required=True, help='Path to benchmark manifest json')
     parser.add_argument('--out-dir', required=True, help='Directory for benchmark outputs')
     args = parser.parse_args()
@@ -161,6 +183,7 @@ def main() -> None:
     report = {
         'manifest': str(manifest_path),
         'case_count': len(cases),
+        'engines': ['plain_mvp', 'refinement', 'summary_agent'],
         'cases': cases,
     }
 

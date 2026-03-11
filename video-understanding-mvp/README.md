@@ -16,7 +16,7 @@ This MVP is designed for **offline video understanding first**, with an upgrade 
 - simple scene grouping
 - timeline output
 - heuristic summary / chapter draft output
-- lightweight benchmark reporting for MVP vs ViDove comparisons
+- lightweight benchmark reporting for plain MVP / refinement / summary-agent three-track comparisons
 
 ## MVP status
 This is now a **real runnable MVP path**, and the current state is stronger than the original placeholder-only skeleton.
@@ -84,8 +84,13 @@ PYTHONPATH=. python3 entries/run_mvp.py \
 ```bash
 PYTHONPATH=. python3 entries/run_benchmark.py \
   --manifest runs/benchmark_manifest.bilibili.v1.json \
-  --out-dir runs/benchmarks/bilibili-v1-status
+  --out-dir runs/benchmarks/bilibili-v2-status
 ```
+
+当前 benchmark 默认比较三条链：
+- Plain MVP
+- MVP + Refinement
+- MVP + Refinement + Summary Agent
 
 ## Output files
 Inside the run directory:
