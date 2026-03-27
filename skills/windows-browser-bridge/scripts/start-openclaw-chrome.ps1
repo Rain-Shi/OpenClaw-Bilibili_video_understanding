@@ -20,4 +20,4 @@ Start-Process -FilePath $ChromePath -ArgumentList @(
 
 Write-Host "Started OpenClaw automation Chrome on port $Port"
 Write-Host "User data dir: $UserDataDir"
-Write-Host "Next: open Outlook or another target site in that Chrome window."
+Write-Host "Next: open the target site in that Chrome window and keep it open."
